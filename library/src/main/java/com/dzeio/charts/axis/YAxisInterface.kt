@@ -41,6 +41,7 @@ sealed interface YAxisInterface {
     /**
      * do the Zero line gets drawn?
      */
+    @Deprecated("use the new global function", ReplaceWith("YAxisInterface.addLine"))
     var drawZeroLine: Boolean
 
     /**
@@ -90,6 +91,23 @@ sealed interface YAxisInterface {
 
     /**
      * Add a Goal line
+     *
      */
+    @Deprecated("use the new global function", ReplaceWith("YAxisInterface.addLine"))
     fun setGoalLine(height: Float?)
+
+    /**
+     * add a line on the Chart
+     *
+     * @param y the Y position of the line
+     * @param paint the Paint of the line if you want to have a custom one
+     */
+    fun addLine(y: Float, line: Line)
+
+    /**
+     * remove a line one the specified position
+     *
+     * @param y the Y position of the line
+     */
+    fun removeLine(y: Float)
 }

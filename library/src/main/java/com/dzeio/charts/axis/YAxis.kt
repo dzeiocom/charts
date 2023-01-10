@@ -40,7 +40,12 @@ class YAxis(
     private var min: Float? = 0f
     private var max: Float? = null
 
-    override var drawZeroLine: Boolean = true
+    @Deprecated("use the new global function", replaceWith = ReplaceWith("YAxisInterface.addLine"))
+    override var drawZeroLine: Boolean = false
+        set(value) {
+            addLine(0f, Line())
+            field = value
+        }
 
     override var scrollEnabled: Boolean = false
 
@@ -61,7 +66,7 @@ class YAxis(
             return max!!
         }
         if (view.series.isEmpty()) {
-            return (this.goalLine ?: 90f) + 10f
+            return this.lines.keys.maxOrNull() ?: 0f
         }
         val seriesMax = view.series
             .maxOf { serie ->
@@ -70,9 +75,6 @@ class YAxis(
                 }
                 return@maxOf serie.getDisplayedEntries().maxOf { entry -> entry.y }
             }
-        if (this.goalLine != null) {
-            return if (seriesMax > this.goalLine!!) seriesMax else this.goalLine!! + 1000f
-        }
         return seriesMax
     }
 
@@ -81,7 +83,7 @@ class YAxis(
             return min!!
         }
         if (view.series.isEmpty()) {
-            return this.goalLine ?: 0f
+            return this.lines.keys.minOrNull() ?: 0f
         }
         return view.series
             .minOf { serie ->
@@ -122,21 +124,26 @@ class YAxis(
 
         }
 
-        if (this.goalLine != null) {
-            val pos = (1 - this.goalLine!! / max) * space.height() + space.top
-            canvas.drawDottedLine(
-                0f,
-                pos,
-                space.right - maxWidth - 32f,
-                pos,
-                space.right / 20,
-                goalLinePaint
-            )
-        }
-
-        if (this.drawZeroLine) {
-            val pos = ((1 - -min / (getYMax() - min)) * space.height() + space.top)
-            canvas.drawLine(0f, pos, space.right - maxWidth - 32f, pos, linePaint)
+        for ((y, settings) in lines) {
+            val pos = ((1 - y - min / (getYMax() - min)) * space.height() + space.top)
+            if (settings.dotted) {
+                canvas.drawDottedLine(
+                    0f,
+                    pos,
+                    space.right - maxWidth - 32f,
+                    pos,
+                    space.right / 20,
+                    settings.paint ?: linePaint
+                )
+            } else {
+                canvas.drawLine(
+                    0f,
+                    pos,
+                    space.right - maxWidth - 32f,
+                    pos,
+                    settings.paint ?: linePaint
+                )
+            }
         }
 
         return maxWidth + 32f
@@ -146,9 +153,20 @@ class YAxis(
 //        TODO("Not yet implemented")
     }
 
-    private var goalLine: Float? = null
+    private val lines: HashMap<Float, Line> = hashMapOf()
 
+    override fun addLine(y: Float, line: Line) {
+        lines[y] = line
+    }
+
+    override fun removeLine(y: Float) {
+        lines.remove(y)
+    }
+
+    @Deprecated("use the new global function", ReplaceWith("YAxisInterface.addLine"))
     override fun setGoalLine(height: Float?) {
-        goalLine = height
+        if (height != null) {
+            addLine(height, Line(true))
+        }
     }
 }
