@@ -37,6 +37,11 @@ sealed interface XAxisInterface {
     var labelCount: Int
 
     /**
+     * is Horizontal Scrolling enabled
+     */
+    var scrollEnabled: Boolean
+
+    /**
      * run when manually refreshing the system
      *
      * this is where the pre-logic is handled to make [onDraw] quicker

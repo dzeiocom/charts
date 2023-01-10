@@ -41,6 +41,8 @@ class XAxis(
 
     override var labelCount: Int = 2
 
+    override var scrollEnabled: Boolean = false
+
     var spacing = 16.0
 
     override val textPaint = Paint().apply {

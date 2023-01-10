@@ -40,6 +40,10 @@ class YAxis(
     private var min: Float? = 0f
     private var max: Float? = null
 
+    var drawZeroLine: Boolean = true
+
+    override var scrollEnabled: Boolean = false
+
     private val rect = Rect()
 
     override fun setYMin(yMin: Float?): YAxisInterface {

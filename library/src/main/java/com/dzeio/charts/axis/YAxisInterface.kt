@@ -34,6 +34,11 @@ sealed interface YAxisInterface {
     val goalLinePaint: Paint
 
     /**
+     * is vertical scrolling enabled
+     */
+    var scrollEnabled: Boolean
+
+    /**
      * run when manually refreshing the system
      *
      * this is where the pre-logic is handled to make [onDraw] quicker

@@ -32,10 +32,23 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
     override var padding: Float = 8f
 
     private val scroller = ChartScroll(this).apply {
-        var lastMovement = 0.0
-        setOnChartMoved { movementX, _ ->
-            xAxis.x += (movementX - lastMovement) * xAxis.getDataWidth() / width
-            lastMovement = movementX.toDouble()
+        var lastMovementX = 0.0
+        var lastMovementY = 0f
+        setOnChartMoved { movementX, movementY ->
+            if (xAxis.scrollEnabled) {
+                xAxis.x += (movementX - lastMovementX) * xAxis.getDataWidth() / width
+                lastMovementX = movementX.toDouble()
+            }
+
+            if (yAxis.scrollEnabled) {
+                val currentYMax = yAxis.getYMax()
+                val currentYMin = yAxis.getYMin()
+                val change = (movementY - lastMovementY) * (currentYMax - currentYMin) / height
+                yAxis.setYMax(currentYMax + change)
+                yAxis.setYMin(currentYMin + change)
+                lastMovementY = movementY
+            }
+
             refresh()
         }
 //        setOnZoomChanged {
