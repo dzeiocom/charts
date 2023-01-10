@@ -67,8 +67,8 @@ class MainFragment : Fragment() {
             materielTheme(this, requireView())
 
             // give the series their entries
-            serie2.entries = generateRandomDataset(20, 20, 80)
-            serie1.entries = generateRandomDataset(20, 0, 90).apply {
+            serie2.entries = generateRandomDataset(20, -50, 50)
+            serie1.entries = generateRandomDataset(20, -50, 50).apply {
                 for (idx in 0 until size) {
                     val compared = serie2.entries[idx]
                     val toCompare = this[idx]
@@ -89,8 +89,12 @@ class MainFragment : Fragment() {
             serie2.linePaint.strokeWidth = 10f
 
             yAxis.apply {
+                // Enable vertical scrolling
+                scrollEnabled = true
+
                 // change the number of labels
                 labelCount = 10
+
                 // change how labels are displayed
                 onValueFormat = { "${it.roundToInt()}g"}
 
@@ -102,11 +106,14 @@ class MainFragment : Fragment() {
                 linePaint.color = Color.WHITE
 
                 // change the min/max high
-                setYMin(15f)
-                setYMax(80f)
+                setYMin(-20f)
+                setYMax(20f)
             }
 
             xAxis.apply {
+                // Enable horizontal scrolling
+                scrollEnabled = true
+
                 // set the width of the datas
                 dataWidth = 10.0
 
