@@ -47,12 +47,14 @@ class BarSerie(
         val max = view.yAxis.getYMax()
         val min = view.yAxis.getYMin()
 
-//        Log.d(TAG, "${space.left}, ${space.right}")
+        val zero = ((1 - -min / (max - min)) * drawableSpace.height() + drawableSpace.top).coerceIn(
+            drawableSpace.top, drawableSpace.bottom
+        )
 
         for (entry in displayedEntries) {
             // calculated height in percent from 0 to 100
             val top = ((1 - (entry.y - min) / (max - min)) * drawableSpace.height() + drawableSpace.top)
-                .coerceAtMost(drawableSpace.bottom)
+                .coerceIn(drawableSpace.top, drawableSpace.bottom)
             var posX = drawableSpace.left + view.xAxis.getPositionOnRect(
                 entry,
                 drawableSpace
@@ -77,18 +79,31 @@ class BarSerie(
                 paint.color = entry.color!!
             }
 
-            canvas.drawRoundRect(
-                posX,
-                top,
-                right,
-                drawableSpace.bottom,
-//                8f, 8f,
-                32f,
-                32f,
-                0f,
-                0f,
-                paint
-            )
+            if (entry.y < 0) {
+                canvas.drawRoundRect(
+                    posX,
+                    zero,
+                    right,
+                    top,
+                    0f,
+                    0f,
+                    32f,
+                    32f,
+                    paint
+                )
+            } else {
+                canvas.drawRoundRect(
+                    posX,
+                    top,
+                    right,
+                    zero,
+                    32f,
+                    32f,
+                    0f,
+                    0f,
+                    paint
+                )
+            }
 
             // handle text display
             val text = view.yAxis.onValueFormat(entry.y)
@@ -112,7 +127,7 @@ class BarSerie(
 
             var textY = if (doDisplayIn) top + rect.height() + 16f else top - 16f
 
-            if (textY < 0) {
+            if (textY < drawableSpace.top + rect.height()) {
                 textY = drawableSpace.top + rect.height()
             }
 
