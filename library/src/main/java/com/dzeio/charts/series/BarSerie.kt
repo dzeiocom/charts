@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
-import android.util.Log
 import com.dzeio.charts.ChartView
 import com.dzeio.charts.utils.drawRoundRect
 
@@ -33,6 +32,13 @@ class BarSerie(
         textAlign = Paint.Align.CENTER
     }
 
+    var textExternalPaint = Paint().apply {
+        isAntiAlias = true
+        color = Color.BLACK
+        textSize = 30f
+        textAlign = Paint.Align.CENTER
+    }
+
     private val rect = Rect()
 
     override fun onDraw(canvas: Canvas, drawableSpace: RectF) {
@@ -45,7 +51,8 @@ class BarSerie(
 
         for (entry in displayedEntries) {
             // calculated height in percent from 0 to 100
-            val top = (1 - entry.y / max) * drawableSpace.height() + drawableSpace.top
+            val top = ((1 - (entry.y - min) / (max - min)) * drawableSpace.height() + drawableSpace.top)
+                .coerceAtMost(drawableSpace.bottom)
             var posX = drawableSpace.left + view.xAxis.getPositionOnRect(
                 entry,
                 drawableSpace
@@ -114,7 +121,7 @@ class BarSerie(
                 text,
                 textLeft,
                 textY,
-                textPaint
+                if (doDisplayIn) textPaint else textExternalPaint
             )
         }
     }
