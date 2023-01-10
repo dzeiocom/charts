@@ -81,4 +81,9 @@ sealed interface XAxisInterface {
      * @return the final height of the XAxis
      */
     fun onDraw(canvas: Canvas, space: RectF): Float
+
+    /**
+     * return the height of the XAxis (available after first draw)
+     */
+    fun getHeight(): Float?
 }

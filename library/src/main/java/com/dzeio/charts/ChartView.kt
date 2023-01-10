@@ -108,13 +108,15 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         }
 
 
-        val bottom = xAxis.onDraw(canvas, rect.apply {
-            set(padding, 0f, width.toFloat() - padding, height.toFloat() - padding)
-        })
+        var bottom = xAxis.getHeight() ?: 0f
 
         // right distance from the yAxis
         val rightDistance = yAxis.onDraw(canvas, rect.apply {
             set(padding, padding, width.toFloat() - padding, height.toFloat() - bottom - padding)
+        })
+
+        bottom = xAxis.onDraw(canvas, rect.apply {
+            set(padding, 0f, width.toFloat() - rightDistance - padding, height.toFloat() - padding)
         })
 
         // chart draw rectangle

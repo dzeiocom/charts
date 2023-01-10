@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
-import android.util.Log
 import com.dzeio.charts.ChartViewInterface
 import com.dzeio.charts.Entry
 import kotlin.math.roundToInt
@@ -53,6 +52,12 @@ class XAxis(
 
     private val rect = Rect()
 
+    private var height: Float? = null
+
+    override fun getHeight(): Float? {
+        return height
+    }
+
     override fun getPositionOnRect(entry: Entry, drawableSpace: RectF): Double {
         return translatePositionToRect(entry.x, drawableSpace)
     }
@@ -89,7 +94,7 @@ class XAxis(
         var maxHeight = 0f
 
         val graphIncrement = space.width() / (labelCount - 1)
-        val valueIncrement = (getDataWidth() / (labelCount - 1)).toDouble()
+        val valueIncrement = getDataWidth() / (labelCount - 1)
         for (index in 0 until labelCount) {
             val text = onValueFormat(x + valueIncrement * index)
             textPaint.getTextBounds(text, 0, text.length, rect)
@@ -108,6 +113,7 @@ class XAxis(
                 textPaint
             )
         }
+        height = maxHeight + 32f
         return maxHeight + 32f
     }
 
