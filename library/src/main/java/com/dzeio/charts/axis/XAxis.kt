@@ -21,23 +21,13 @@ class XAxis(
         set(value) {
             val max = getXMax() - getDataWidth()
             val min = getXMin()
-            if (value > max && min <= max) {
-                field = max
-                return
-            }
 
-            if (value < min) {
-                field = min
-                return
-            }
-
-            field = value
+            field = value.coerceIn(min, max.coerceAtLeast(min))
         }
 
     override var enabled = true
 
     override var dataWidth: Double? = null
-        get() = field ?: getXMax()
 
     override var labelCount: Int = 2
 
@@ -133,16 +123,13 @@ class XAxis(
             }
         }
 
-        return clamp(drawableSpace.width() * smallest / getDataWidth() - spacing, 1.0, drawableSpace.width().toDouble())
+        return (drawableSpace.width() * smallest / getDataWidth() - spacing)
+            .coerceIn(1.0, drawableSpace.width().toDouble())
     }
-
 
     override fun getDataWidth(): Double {
-        // TODO: handle the auto dataWidth better
-        return dataWidth ?: getXMax()
+        // TODO: handle the auto dataWidth better (still not sure it is good enough)
+        return dataWidth ?: (getXMax() - getXMin() + 1)
     }
 
-    private fun clamp(value: Double, min: Double, max: Double): Double {
-        return if (value < min) min else if (value > max) max else value
-    }
 }
