@@ -40,7 +40,7 @@ class YAxis(
     private var min: Float? = 0f
     private var max: Float? = null
 
-    var drawZeroLine: Boolean = true
+    override var drawZeroLine: Boolean = true
 
     override var scrollEnabled: Boolean = false
 
@@ -99,11 +99,10 @@ class YAxis(
 
         val min = getYMin()
         val max = getYMax() - min
-        val top = space.top
         val bottom = space.bottom
         var maxWidth = 0f
 
-        val increment = (bottom - top) / labelCount
+        val increment = space.height() / labelCount
         val valueIncrement = max / labelCount
         for (index in 0 until labelCount) {
             val text = onValueFormat(min + (valueIncrement * (index + 1)))
@@ -133,6 +132,11 @@ class YAxis(
                 space.right / 20,
                 goalLinePaint
             )
+        }
+
+        if (this.drawZeroLine) {
+            val pos = ((1 - -min / (getYMax() - min)) * space.height() + space.top)
+            canvas.drawLine(0f, pos, space.right - maxWidth - 32f, pos, linePaint)
         }
 
         return maxWidth + 32f

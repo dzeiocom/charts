@@ -39,6 +39,11 @@ sealed interface YAxisInterface {
     var scrollEnabled: Boolean
 
     /**
+     * do the Zero line gets drawn?
+     */
+    var drawZeroLine: Boolean
+
+    /**
      * run when manually refreshing the system
      *
      * this is where the pre-logic is handled to make [onDraw] quicker
