@@ -100,9 +100,9 @@ class YAxis(
         var maxWidth = 0f
 
         val increment = (bottom - top) / labelCount
-        val valueIncrement = (max - min) / labelCount
+        val valueIncrement = max / labelCount
         for (index in 0 until labelCount) {
-            val text = onValueFormat((valueIncrement * (index + 1)))
+            val text = onValueFormat(min + (valueIncrement * (index + 1)))
             textLabel.getTextBounds(text, 0, text.length, rect)
             maxWidth = maxWidth.coerceAtLeast(rect.width().toFloat())
 
