@@ -12,6 +12,7 @@ import com.dzeio.charts.series.BarSerie
 import com.dzeio.charts.series.LineSerie
 import com.dzeio.chartstest.databinding.FragmentMainBinding
 import com.google.android.material.color.MaterialColors
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class MainFragment : Fragment() {
@@ -66,8 +67,8 @@ class MainFragment : Fragment() {
             materielTheme(this, requireView())
 
             // give the series their entries
-            serie2.entries = generateRandomDataset(20)
-            serie1.entries = generateRandomDataset(20).apply {
+            serie2.entries = generateRandomDataset(20, 20, 80)
+            serie1.entries = generateRandomDataset(20, 0, 90).apply {
                 for (idx in 0 until size) {
                     val compared = serie2.entries[idx]
                     val toCompare = this[idx]
@@ -79,8 +80,45 @@ class MainFragment : Fragment() {
                 }
             }
 
+//            serie1.textExternalPaint = Color.WHITE
+
             // make the lineSerie red
             serie2.linePaint.color = Color.WHITE
+
+            // strokeWidth also control the points width
+            serie2.linePaint.strokeWidth = 10f
+
+            yAxis.apply {
+                // change the number of labels
+                labelCount = 10
+                // change how labels are displayed
+                onValueFormat = { "${it.roundToInt()}g"}
+
+                // change labels colors
+                textLabel.color = Color.WHITE
+
+
+                // change line color
+                linePaint.color = Color.WHITE
+
+                // change the min/max high
+                setYMin(15f)
+                setYMax(80f)
+            }
+
+            xAxis.apply {
+                // set the width of the datas
+                dataWidth = 10.0
+
+                // change the number of labels displayed
+                labelCount = 5
+
+                // change the spacing between values (it can be overriden if size to to small)
+                spacing = 8.0
+
+                // set the offset in data (use with [dataWidth])
+                x = 5.0
+            }
 
             // refresh the Chart
             refresh()
@@ -95,13 +133,13 @@ class MainFragment : Fragment() {
     /**
      * Generate a random dataset
      */
-    private fun generateRandomDataset(size: Int = 100): ArrayList<Entry> {
+    private fun generateRandomDataset(size: Int = 100, min: Int = 0, max: Int = 100): ArrayList<Entry> {
         val dataset: ArrayList<Entry> = arrayListOf()
 
-        for (i in 0 until size) {
+        for (i in 0 .. size) {
             dataset.add(Entry(
                 i.toDouble(),
-                Random.nextInt(0, 100).toFloat()
+                Random.nextInt(min, max).toFloat()
             ))
         }
 
@@ -146,6 +184,10 @@ class MainFragment : Fragment() {
                         textPaint.color = MaterialColors.getColor(
                             view,
                             com.google.android.material.R.attr.colorOnPrimary
+                        )
+                        textExternalPaint.color = MaterialColors.getColor(
+                            view,
+                            com.google.android.material.R.attr.colorPrimary
                         )
                     }
                 } else if (serie is LineSerie) {
