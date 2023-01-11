@@ -14,7 +14,18 @@ updates:
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
   - package-ecosystem: gradle
-    directory: "/app"
+    directory: "/library"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: build
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        
+        
+  - package-ecosystem: gradle
+    directory: "/sample"
     schedule:
       interval: daily
     commit-message:
