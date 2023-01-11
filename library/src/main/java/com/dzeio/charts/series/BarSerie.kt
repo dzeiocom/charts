@@ -41,7 +41,9 @@ class BarSerie(
 
     private val rect = Rect()
 
-    override fun onDraw(canvas: Canvas, drawableSpace: RectF) {
+    private var entriesCurrentY: HashMap<Double, Float> = hashMapOf()
+
+    override fun onDraw(canvas: Canvas, drawableSpace: RectF): Boolean {
         val displayedEntries = getDisplayedEntries()
         val barWidth = view.xAxis.getEntryWidth(drawableSpace).toFloat()
         val max = view.yAxis.getYMax()
@@ -51,14 +53,35 @@ class BarSerie(
             drawableSpace.top, drawableSpace.bottom
         )
 
+        var needUpdate = false
+
+        val iterator = entriesCurrentY.iterator()
+        while (iterator.hasNext()) {
+            val key = iterator.next().key
+            if (displayedEntries.find { it.x == key } == null) iterator.remove()
+        }
+
         for (entry in displayedEntries) {
+
+            if (entriesCurrentY[entry.x] == null) {
+                entriesCurrentY[entry.x] = zero
+            }
+
             // calculated height in percent from 0 to 100
-            val top = ((1 - (entry.y - min) / (max - min)) * drawableSpace.height() + drawableSpace.top)
+            var top = ((1 - (entry.y - min) / (max - min)) * drawableSpace.height() + drawableSpace.top)
                 .coerceIn(drawableSpace.top, drawableSpace.bottom)
             var posX = drawableSpace.left + view.xAxis.getPositionOnRect(
                 entry,
                 drawableSpace
             ).toFloat()
+
+            // change value with te animator
+            val newY = view.animator.updateValue(top, entriesCurrentY[entry.x]!!, zero)
+            if (!needUpdate && top != newY) {
+                needUpdate = true
+            }
+            top = newY
+            entriesCurrentY[entry.x] = top
 
             val right = (posX + barWidth).coerceAtMost(drawableSpace.right)
 
@@ -139,6 +162,8 @@ class BarSerie(
                 if (doDisplayIn) textPaint else textExternalPaint
             )
         }
+
+        return needUpdate
     }
 
     override fun refresh() {

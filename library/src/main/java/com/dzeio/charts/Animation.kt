@@ -1,7 +1,6 @@
 package com.dzeio.charts
 
 import kotlin.math.abs
-import kotlin.math.max
 
 data class Animation(
     /**
@@ -22,28 +21,24 @@ data class Animation(
     /**
      * Update the value depending on the maximum obtainable value
      *
-     * @param maxValue the maximum value the item can obtain
      * @param targetValue the value you want to obtain at the end of the animation
      * @param currentValue the current value
+     * @param startValue the value at which the the base started on
+     * @param step override the auto moveValue change
      *
      * @return the new updated value
      */
     fun updateValue(
-        maxValue: Float,
         targetValue: Float,
         currentValue: Float,
-        minValue: Float,
-        minStep: Float
+        startValue: Float,
+        step: Float?
     ): Float {
         if (!enabled) {
             return targetValue
         }
 
-        if (currentValue < minValue) {
-            return minValue
-        }
-
-        val moveValue = max(minStep, (maxValue - targetValue) / refreshRate)
+        val moveValue = step ?: (abs(targetValue - startValue) / duration * refreshRate)
 
         var result = targetValue
         if (currentValue < targetValue) {
@@ -53,13 +48,30 @@ data class Animation(
         }
 
         if (
-            abs(targetValue - currentValue) <= moveValue ||
-            result < minValue ||
-            result > maxValue
+            abs(targetValue - currentValue) <= moveValue
         ) {
             return targetValue
         }
         return result
+    }
+
+    /**
+     * Update the value depending on the maximum obtainable value
+     *
+     * @param targetValue the value you want to obtain at the end of the animation
+     * @param currentValue the current value
+     * @param startValue the value at which the the base started on
+     *
+     * @return the new updated value
+     */
+    fun updateValue(
+        targetValue: Float,
+        currentValue: Float,
+        startValue: Float
+    ): Float {
+        return updateValue(
+            targetValue, currentValue, startValue, null
+        )
     }
 
     fun getDelay() = this.duration / this.refreshRate

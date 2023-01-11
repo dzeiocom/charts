@@ -36,6 +36,8 @@ class MainFragment : Fragment() {
             val serie1 = BarSerie(this)
             val serie2 = BarSerie(this)
 
+            animator.duration = 750
+
             // transform the chart into a grouped chart
             type = ChartType.GROUPED
 

@@ -21,6 +21,8 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         const val TAG = "Charts/ChartView"
     }
 
+    override val animator: Animation = Animation()
+
     override var type: ChartType = ChartType.BASIC
 
     override var debug: Boolean = false
@@ -59,22 +61,6 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 //            refresh()
 //        }
     }
-
-//    val animator: Runnable = object : Runnable {
-//        override fun run() {
-//            var needNewFrame = false
-//            for (serie in series) {
-//                val result = serie.onUpdate()
-//                if (result) {
-//                    needNewFrame = true
-//                }
-//            }
-//            if (needNewFrame) {
-//                postDelayed(this, animation.getDelay().toLong())
-//            }
-//            invalidate()
-//        }
-//    }
 
     // rect used for calculations
     private val rect = RectF()
@@ -144,8 +130,15 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             )
         }
 
+        var needRedraw = false
         for (serie in series) {
-            serie.onDraw(canvas, rect)
+            val tmp = serie.onDraw(canvas, rect)
+            if (tmp) {
+                needRedraw = true
+            }
+        }
+        if (needRedraw) {
+            postDelayed({ this.invalidate() }, animator.getDelay().toLong())
         }
         super.onDraw(canvas)
     }

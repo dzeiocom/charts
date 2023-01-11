@@ -31,7 +31,7 @@ sealed class BaseSerie(
         for (i in 0 until entries.size) {
             val it = entries[i]
             if (it.x in minX..maxX) {
-                if (result.size === 0 && i > 0) {
+                if (result.size == 0 && i > 0) {
                     result.add((entries[i - 1]))
                 }
                 lastIndex = i
@@ -43,8 +43,9 @@ sealed class BaseSerie(
             result.add(entries [lastIndex + 1])
         }
 
+        result.sortBy { it.x }
         return result
     }
 
-    abstract override fun onDraw(canvas: Canvas, drawableSpace: RectF)
+    abstract override fun onDraw(canvas: Canvas, drawableSpace: RectF): Boolean
 }

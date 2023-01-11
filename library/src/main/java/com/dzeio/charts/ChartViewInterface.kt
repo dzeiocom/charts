@@ -6,6 +6,8 @@ import com.dzeio.charts.series.SerieInterface
 
 interface ChartViewInterface {
 
+    val animator: Animation
+
     /**
      * Chart Type
      */

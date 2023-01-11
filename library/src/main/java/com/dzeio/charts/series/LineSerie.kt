@@ -31,18 +31,43 @@ class LineSerie(
         textAlign = Paint.Align.CENTER
     }
 
-    override fun onDraw(canvas: Canvas, drawableSpace: RectF) {
+    private var entriesCurrentY: HashMap<Double, Float> = hashMapOf()
+
+    override fun onDraw(canvas: Canvas, drawableSpace: RectF): Boolean {
         val displayedEntries = getDisplayedEntries()
-        displayedEntries.sortBy { it.x }
         val max = view.yAxis.getYMax()
         val min = view.yAxis.getYMin()
 
         var previousPosX: Float? = null
         var previousPosY: Float? = null
 
+        var needUpdate = false
+
+        val iterator = entriesCurrentY.iterator()
+        while (iterator.hasNext()) {
+            val key = iterator.next().key
+            if (displayedEntries.find { it.x == key } == null) iterator.remove()
+        }
+
+        val zero = ((1 - -min / (max - min)) * drawableSpace.height() + drawableSpace.top).coerceIn(
+            drawableSpace.top, drawableSpace.bottom
+        )
+
         for (entry in displayedEntries) {
+
+            if (entriesCurrentY[entry.x] == null) {
+                entriesCurrentY[entry.x] = zero
+            }
+
             // calculated height in percent from 0 to 100
-            val top = (1 - (entry.y - min) / (max - min)) * drawableSpace.height() + drawableSpace.top
+            var top = (1 - (entry.y - min) / (max - min)) * drawableSpace.height() + drawableSpace.top
+            val newY = view.animator.updateValue(top, entriesCurrentY[entry.x]!!, zero)
+            if (!needUpdate && top != newY) {
+                needUpdate = true
+            }
+            top = newY
+            entriesCurrentY[entry.x] = top
+
             val posX = (drawableSpace.left +
                     view.xAxis.getPositionOnRect(entry, drawableSpace) +
                     view.xAxis.getEntryWidth(drawableSpace) / 2f).toFloat()
@@ -67,6 +92,8 @@ class LineSerie(
             previousPosX = posX
             previousPosY = top
         }
+
+        return needUpdate
     }
 
     override fun refresh() {
