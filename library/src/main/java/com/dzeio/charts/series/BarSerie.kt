@@ -41,7 +41,7 @@ class BarSerie(
 
     private val rect = Rect()
 
-    private var entriesCurrentY: HashMap<Double, Float> = hashMapOf()
+    private var entriesCurrentY: HashMap<Double, AnimationProgress> = hashMapOf()
 
     override fun onDraw(canvas: Canvas, drawableSpace: RectF): Boolean {
         val displayedEntries = getDisplayedEntries()
@@ -64,7 +64,7 @@ class BarSerie(
         for (entry in displayedEntries) {
 
             if (entriesCurrentY[entry.x] == null) {
-                entriesCurrentY[entry.x] = zero
+                entriesCurrentY[entry.x] = AnimationProgress(zero)
             }
 
             // calculated height in percent from 0 to 100
@@ -75,13 +75,16 @@ class BarSerie(
                 drawableSpace
             ).toFloat()
 
-            // change value with te animator
-            val newY = view.animator.updateValue(top, entriesCurrentY[entry.x]!!, zero)
-            if (!needUpdate && top != newY) {
-                needUpdate = true
+            // change value with the animator
+            if (!entriesCurrentY[entry.x]!!.finished) {
+                val newY = view.animator.updateValue(top, entriesCurrentY[entry.x]!!.value, zero)
+                if (!needUpdate && top != newY) {
+                    needUpdate = true
+                }
+                entriesCurrentY[entry.x]!!.finished = top == newY
+                top = newY
+                entriesCurrentY[entry.x]!!.value = top
             }
-            top = newY
-            entriesCurrentY[entry.x] = top
 
             val right = (posX + barWidth).coerceAtMost(drawableSpace.right)
 

@@ -15,6 +15,11 @@ sealed class BaseSerie(
         const val TAG = "Charts/BaseSerie"
     }
 
+    protected data class AnimationProgress(
+        var value: Float,
+        var finished: Boolean = false
+    )
+
     override var formatValue: (entry: Entry) -> String = { entry -> entry.y.roundToInt().toString()}
 
     override var yAxisPosition: YAxisPosition = YAxisPosition.RIGHT
