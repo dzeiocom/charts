@@ -21,6 +21,8 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         const val TAG = "Charts/ChartView"
     }
 
+    override var type: ChartType = ChartType.BASIC
+
     override var debug: Boolean = false
 
     override val xAxis = XAxis(this)
