@@ -114,7 +114,7 @@ class MainFragment : Fragment() {
                 scrollEnabled = true
 
                 // change the number of labels
-                labelCount = 10
+                labelCount = 11
 
                 // change how labels are displayed
                 onValueFormat = { "${it.roundToInt()}g"}
