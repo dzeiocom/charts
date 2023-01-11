@@ -104,14 +104,14 @@ class YAxis(
         val bottom = space.bottom
         var maxWidth = 0f
 
-        val increment = space.height() / labelCount
-        val valueIncrement = max / labelCount
+        val increment = space.height() / (labelCount - 1)
+        val valueIncrement = max / (labelCount - 1)
         for (index in 0 until labelCount) {
-            val text = onValueFormat(min + (valueIncrement * (index + 1)))
+            val text = onValueFormat(min + (valueIncrement * index))
             textLabel.getTextBounds(text, 0, text.length, rect)
             maxWidth = maxWidth.coerceAtLeast(rect.width().toFloat())
 
-            val posY = bottom - (index + 1) * increment
+            val posY = bottom - index * increment
 
             canvas.drawText(
                 text,
@@ -121,7 +121,6 @@ class YAxis(
             )
 //            canvas.drawDottedLine(0f, posY, canvas.width.toFloat(), posY, 40f, linePaint)
             canvas.drawLine(space.left, posY, space.right - maxWidth - 32f, posY, linePaint)
-
         }
 
         for ((y, settings) in lines) {
