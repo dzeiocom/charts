@@ -7,6 +7,11 @@ import com.dzeio.charts.series.SerieInterface
 interface ChartViewInterface {
 
     /**
+     * Chart Type
+     */
+    var type: ChartType
+
+    /**
      * Make the whole view in debug mode
      *
      * add debug texts, logs, and more

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.dzeio.charts.ChartType
 import com.dzeio.charts.ChartView
 import com.dzeio.charts.Entry
 import com.dzeio.charts.series.BarSerie
@@ -30,21 +31,27 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.chart1.apply {
+        binding.chartGrouped.apply {
             // setup the Serie
-            val serie = BarSerie(this)
+            val serie1 = BarSerie(this)
+            val serie2 = BarSerie(this)
+
+            // transform the chart into a grouped chart
+            type = ChartType.GROUPED
 
             // utils function to use Material3 auto colors
             materielTheme(this, requireView())
+            serie2.barPaint.color = Color.RED
 
             // give the serie it's entries
-            serie.entries = generateRandomDataset(10)
+            serie1.entries = generateRandomDataset(10)
+            serie2.entries = generateRandomDataset(10)
 
             // refresh the Chart
             refresh()
         }
 
-        binding.chart2.apply {
+        binding.chartLine.apply {
             // setup the Serie
             val serie = LineSerie(this)
 
@@ -58,7 +65,21 @@ class MainFragment : Fragment() {
             refresh()
         }
 
-        binding.chart3.apply {
+        binding.chartBar.apply {
+            // setup the Serie
+            val serie = BarSerie(this)
+
+            // utils function to use Material3 auto colors
+            materielTheme(this, requireView())
+
+            // give the serie its entries
+            serie.entries = generateRandomDataset(10)
+
+            // refresh the Chart
+            refresh()
+        }
+
+        binding.chartCustomization.apply {
             // setup the Series
             val serie1 = BarSerie(this)
             val serie2 = LineSerie(this)

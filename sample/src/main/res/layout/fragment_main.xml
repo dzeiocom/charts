@@ -6,35 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainFragment">
 
-<!--    <ScrollView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:showDividers="middle"
+            android:divider="@drawable/shape_divider"
             android:padding="16dp">
 
             <com.dzeio.charts.ChartView
-                android:id="@+id/chart1"
+                android:id="@+id/chart_grouped"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
 
             <com.dzeio.charts.ChartView
-                android:id="@+id/chart3"
-                android:layout_marginVertical="16dp"
+                android:id="@+id/chart_customization"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
 
             <com.dzeio.charts.ChartView
-                android:id="@+id/chart2"
+                android:id="@+id/chart_bar"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+            <com.dzeio.charts.ChartView
+                android:id="@+id/chart_line"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
         </LinearLayout>
 
-<!--    </ScrollView>-->
-
-
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import com.dzeio.charts.ChartType
 import com.dzeio.charts.ChartViewInterface
 import com.dzeio.charts.Entry
 import kotlin.math.roundToInt
@@ -51,11 +52,13 @@ class XAxis(
     }
 
     override fun getPositionOnRect(entry: Entry, drawableSpace: RectF): Double {
-        return translatePositionToRect(entry.x, drawableSpace)
-    }
-
-    fun translatePositionToRect(value: Double, drawableSpace: RectF): Double {
-        return drawableSpace.width() * (value - x) / getDataWidth()
+        val result = drawableSpace.width() * (entry.x - x) / getDataWidth()
+        if (view.type == ChartType.GROUPED) {
+            val serie = view.series.find { it.entries.contains(entry) }
+            val index = view.series.indexOf(serie)
+            return result + getEntryWidth(drawableSpace) * index + spacing / 2 * index
+        }
+        return result
     }
 
     override fun getXMax(): Double {
@@ -123,8 +126,15 @@ class XAxis(
             }
         }
 
-        return (drawableSpace.width() * smallest / getDataWidth() - spacing)
+        val result = (drawableSpace.width() * smallest / getDataWidth() - spacing)
             .coerceIn(1.0, drawableSpace.width().toDouble())
+
+        // handle grouped series
+        if (view.type == ChartType.GROUPED) {
+            return result / view.series.size - spacing / 2 * (view.series.size - 1)
+        }
+
+        return result
     }
 
     override fun getDataWidth(): Double {
