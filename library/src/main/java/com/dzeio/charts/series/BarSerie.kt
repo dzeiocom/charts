@@ -64,6 +64,7 @@ class BarSerie(
 
             // calculated height in percent from 0 to 100
             var top = view.yAxis.getPositionOnRect(entry, drawableSpace)
+                .coerceIn(drawableSpace.top, drawableSpace.bottom)
             var posX = view.xAxis.getPositionOnRect(
                 entry,
                 drawableSpace
@@ -99,7 +100,9 @@ class BarSerie(
                 paint.color = entry.color!!
             }
 
+            var height: Float
             if (entry.y < 0) {
+                height = top - zero
                 canvas.drawRoundRect(
                     posX,
                     zero,
@@ -112,6 +115,7 @@ class BarSerie(
                     paint
                 )
             } else {
+                height = zero - top
                 canvas.drawRoundRect(
                     posX,
                     top,
@@ -130,31 +134,22 @@ class BarSerie(
 
             textPaint.getTextBounds(text, 0, text.length, rect)
 
-            val textLeft = (posX + barWidth / 2)
-
-            if (
-                // handle right side
-                textLeft + rect.width() / 2 > right ||
-                // handle left sie
-                textLeft - rect.width() / 2 < drawableSpace.left
-            ) {
-                continue
-            }
+            // text center X
+            val textX = (posX + barWidth / 2)
 
             val doDisplayIn =
-                rect.height() < drawableSpace.bottom - top &&
-                rect.width() < barWidth
+                rect.height() + 32f < height
 
             var textY = if (doDisplayIn) top + rect.height() + 16f else top - 16f
+            if (entry.y < 0f) textY = if (doDisplayIn) top - 16f else top + rect.height() + 16f
 
             if (textY < drawableSpace.top + rect.height()) {
                 textY = drawableSpace.top + rect.height()
             }
 
-
             canvas.drawText(
                 text,
-                textLeft,
+                textX,
                 textY,
                 if (doDisplayIn) textPaint else textExternalPaint
             )
