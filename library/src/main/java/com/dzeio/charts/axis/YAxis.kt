@@ -81,6 +81,12 @@ class YAxis(
                 }
                 for (index in 0 until serie.entries.size) {
                     val entry = serie.entries[index]
+                    if (sign(entry.y) <= 0f && nList[index] > 0f) {
+                        continue
+                    } else if (nList[index] < 0f && entry.y > 0f) {
+                        nList[index] = entry.y
+                        continue
+                    }
                     nList[index] += entry.y
                 }
             }
@@ -114,6 +120,12 @@ class YAxis(
                 }
                 for (index in 0 until serie.entries.size) {
                     val entry = serie.entries[index]
+                    if (sign(entry.y) >= 0f && nList[index] < 0f) {
+                        continue
+                    } else if (nList[index] > 0f && entry.y < 0f) {
+                        nList[index] = entry.y
+                        continue
+                    }
                     nList[index] += entry.y
                 }
             }
