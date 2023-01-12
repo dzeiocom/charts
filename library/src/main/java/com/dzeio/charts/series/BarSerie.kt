@@ -64,7 +64,7 @@ class BarSerie(
 
             // calculated height in percent from 0 to 100
             var top = view.yAxis.getPositionOnRect(entry, drawableSpace)
-            var posX = drawableSpace.left + view.xAxis.getPositionOnRect(
+            var posX = view.xAxis.getPositionOnRect(
                 entry,
                 drawableSpace
             ).toFloat()

@@ -68,8 +68,7 @@ class LineSerie(
                 entriesCurrentY[entry.x]!!.value = top
             }
 
-            val posX = (drawableSpace.left +
-                    view.xAxis.getPositionOnRect(entry, drawableSpace) +
+            val posX = (view.xAxis.getPositionOnRect(entry, drawableSpace) +
                     view.xAxis.getEntryWidth(drawableSpace) / 2f).toFloat()
 
             // handle color recoloration
