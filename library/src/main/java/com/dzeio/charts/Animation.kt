@@ -70,7 +70,10 @@ data class Animation(
         startValue: Float
     ): Float {
         return updateValue(
-            targetValue, currentValue, startValue, null
+            targetValue,
+            currentValue,
+            startValue,
+            null
         )
     }
 

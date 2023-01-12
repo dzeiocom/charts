@@ -50,7 +50,6 @@ class LineSerie(
         val zero = view.yAxis.getPositionOnRect(0f, drawableSpace)
 
         for (entry in displayedEntries) {
-
             if (entriesCurrentY[entry.x] == null) {
                 entriesCurrentY[entry.x] = AnimationProgress(zero)
             }
