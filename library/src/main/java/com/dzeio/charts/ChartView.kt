@@ -144,8 +144,14 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             )
         }
 
-        for (serie in series) {
-            serie.onDraw(canvas, rect)
+        if (type == ChartType.STACKED) {
+            for (serie in series.reversed()) {
+                serie.onDraw(canvas, rect)
+            }
+        } else {
+            for (serie in series) {
+                serie.onDraw(canvas, rect)
+            }
         }
         super.onDraw(canvas)
     }

@@ -37,15 +37,15 @@ class MainFragment : Fragment() {
             val serie2 = BarSerie(this)
 
             // transform the chart into a grouped chart
-            type = ChartType.GROUPED
+            type = ChartType.STACKED
 
             // utils function to use Material3 auto colors
             materielTheme(this, requireView())
             serie2.barPaint.color = Color.RED
 
             // give the serie it's entries
-            serie1.entries = generateRandomDataset(10)
-            serie2.entries = generateRandomDataset(10)
+            serie1.entries = generateRandomDataset(1)
+            serie2.entries = generateRandomDataset(1)
 
             // refresh the Chart
             refresh()
