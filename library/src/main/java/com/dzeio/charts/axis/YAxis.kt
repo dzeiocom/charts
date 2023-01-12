@@ -5,12 +5,12 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
-import android.util.Log
 import com.dzeio.charts.ChartType
 import com.dzeio.charts.ChartViewInterface
 import com.dzeio.charts.Entry
 import com.dzeio.charts.utils.drawDottedLine
 import kotlin.math.roundToInt
+import kotlin.math.sign
 
 class YAxis(
     private val view: ChartViewInterface
@@ -40,7 +40,7 @@ class YAxis(
 
     override var labelCount = 5
 
-    private var min: Float? = 0f
+    private var min: Float? = null
     private var max: Float? = null
 
     @Deprecated("use the new global function", replaceWith = ReplaceWith("YAxisInterface.addLine"))
@@ -80,7 +80,7 @@ class YAxis(
                     nList.add(0f)
                 }
                 for (index in 0 until serie.entries.size) {
-                    val entry =  serie.entries[index]
+                    val entry = serie.entries[index]
                     nList[index] += entry.y
                 }
             }
@@ -113,7 +113,7 @@ class YAxis(
                     nList.add(0f)
                 }
                 for (index in 0 until serie.entries.size) {
-                    val entry =  serie.entries[index]
+                    val entry = serie.entries[index]
                     nList[index] += entry.y
                 }
             }
@@ -204,32 +204,34 @@ class YAxis(
         }
     }
 
-    fun getYPositionOnRect(entry: Entry, drawableSpace: RectF): Float {
-
+    override fun getPositionOnRect(entry: Entry, drawableSpace: RectF): Float {
         if (view.type == ChartType.STACKED) {
             val serie = view.series.find { it.entries.contains(entry) }
             val index = view.series.indexOf(serie)
-            if (index > 0) {
-                Log.d("TAG", "index is larger than 0")
-                val entry2 = view.series[index - 1].entries.find { it.x == entry.x }
-                if (entry2 != null) {
-                    val tmp = Entry(entry.x, entry.y + entry2.y)
-                    val r = getYPositionOnRect(tmp, drawableSpace)
-                    Log.d("pouet", "${entry.y} - ${entry2.y} $r")
-                    return r
-                }
-            }
+            return getPositionOnRect(entry, drawableSpace, index)
         }
-        val result = getYPositionOnRectForPoint(entry.y, drawableSpace)
-        return result
+        return getPositionOnRect(entry.y, drawableSpace)
     }
 
-    fun getYPositionOnRectForPoint(point: Float, drawableSpace: RectF): Float {
+    private fun getPositionOnRect(entry: Entry, drawableSpace: RectF, index: Int): Float {
+        if (index > 0) {
+            val entry2 = view.series[index - 1].entries.find { it.x == entry.x }
+            if (entry2 != null) {
+                // make a new """Entry""" containing the new Y
+                val isReverse = sign(entry2.y) != sign(entry.y)
+                val tmp = Entry(entry.x, if (isReverse) entry.y else entry.y + entry2.y)
+                return getPositionOnRect(tmp, drawableSpace, index - 1)
+            }
+        }
+        return getPositionOnRect(entry.y, drawableSpace)
+    }
+
+    override fun getPositionOnRect(point: Float, drawableSpace: RectF): Float {
         val min = getYMin()
         val max = getYMax()
 
-        return ((1 - (point - min) / (max - min)) * drawableSpace.height() + drawableSpace.top).coerceIn(
-            drawableSpace.top, drawableSpace.bottom
-        )
+        return (1 - (point - min) / (max - min)) *
+            drawableSpace.height() +
+            drawableSpace.top
     }
 }

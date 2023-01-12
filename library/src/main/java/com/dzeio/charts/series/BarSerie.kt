@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import android.util.Log
 import com.dzeio.charts.ChartView
 import com.dzeio.charts.utils.drawRoundRect
 
@@ -45,11 +46,11 @@ class BarSerie(
         val displayedEntries = getDisplayedEntries()
         val barWidth = view.xAxis.getEntryWidth(drawableSpace).toFloat()
 
-        val zero = view.yAxis.getYPositionOnRectForPoint(0f, drawableSpace)
+        val zero = view.yAxis.getPositionOnRect(0f, drawableSpace)
 
         for (entry in displayedEntries) {
             // calculated height in percent from 0 to 100
-            val top = view.yAxis.getYPositionOnRect(entry, drawableSpace)
+            val top = view.yAxis.getPositionOnRect(entry, drawableSpace)
             var posX = drawableSpace.left + view.xAxis.getPositionOnRect(
                 entry,
                 drawableSpace

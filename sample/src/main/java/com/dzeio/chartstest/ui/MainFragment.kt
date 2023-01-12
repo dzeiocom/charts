@@ -164,7 +164,7 @@ class MainFragment : Fragment() {
     private fun generateRandomDataset(size: Int = 100, min: Int = 0, max: Int = 100): ArrayList<Entry> {
         val dataset: ArrayList<Entry> = arrayListOf()
 
-        for (i in 0 .. size) {
+        for (i in 0 until size) {
             dataset.add(Entry(
                 i.toDouble(),
                 Random.nextInt(min, max).toFloat()

@@ -34,15 +34,13 @@ class LineSerie(
     override fun onDraw(canvas: Canvas, drawableSpace: RectF) {
         val displayedEntries = getDisplayedEntries()
         displayedEntries.sortBy { it.x }
-        val max = view.yAxis.getYMax()
-        val min = view.yAxis.getYMin()
 
         var previousPosX: Float? = null
         var previousPosY: Float? = null
 
         for (entry in displayedEntries) {
             // calculated height in percent from 0 to 100
-            val top = (1 - (entry.y - min) / (max - min)) * drawableSpace.height() + drawableSpace.top
+            val top = view.yAxis.getPositionOnRect(entry, drawableSpace)
             val posX = (drawableSpace.left +
                     view.xAxis.getPositionOnRect(entry, drawableSpace) +
                     view.xAxis.getEntryWidth(drawableSpace) / 2f).toFloat()
