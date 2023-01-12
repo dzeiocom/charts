@@ -39,15 +39,15 @@ class MainFragment : Fragment() {
             animator.duration = 750
 
             // transform the chart into a grouped chart
-            type = ChartType.GROUPED
+            type = ChartType.STACKED
 
             // utils function to use Material3 auto colors
             materielTheme(this, requireView())
             serie2.barPaint.color = Color.RED
 
             // give the serie it's entries
-            serie1.entries = generateRandomDataset(10)
-            serie2.entries = generateRandomDataset(10)
+            serie1.entries = generateRandomDataset(1)
+            serie2.entries = generateRandomDataset(1)
 
             // refresh the Chart
             refresh()
@@ -166,7 +166,7 @@ class MainFragment : Fragment() {
     private fun generateRandomDataset(size: Int = 100, min: Int = 0, max: Int = 100): ArrayList<Entry> {
         val dataset: ArrayList<Entry> = arrayListOf()
 
-        for (i in 0 .. size) {
+        for (i in 0 until size) {
             dataset.add(Entry(
                 i.toDouble(),
                 Random.nextInt(min, max).toFloat()

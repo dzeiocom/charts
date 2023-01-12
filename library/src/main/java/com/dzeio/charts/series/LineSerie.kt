@@ -35,8 +35,6 @@ class LineSerie(
 
     override fun onDraw(canvas: Canvas, drawableSpace: RectF): Boolean {
         val displayedEntries = getDisplayedEntries()
-        val max = view.yAxis.getYMax()
-        val min = view.yAxis.getYMin()
 
         var previousPosX: Float? = null
         var previousPosY: Float? = null
@@ -60,7 +58,7 @@ class LineSerie(
             }
 
             // calculated height in percent from 0 to 100
-            var top = (1 - (entry.y - min) / (max - min)) * drawableSpace.height() + drawableSpace.top
+            var top = view.yAxis.getPositionOnRect(entry, drawableSpace)
 
             // change value with the animator
             if (!entriesCurrentY[entry.x]!!.finished) {

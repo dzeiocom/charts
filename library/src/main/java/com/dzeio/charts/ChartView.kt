@@ -131,15 +131,24 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         }
 
         var needRedraw = false
-        for (serie in series) {
-            val tmp = serie.onDraw(canvas, rect)
-            if (tmp) {
-                needRedraw = true
+        if (type == ChartType.STACKED) {
+            for (serie in series.reversed()) {
+                val tmp = serie.onDraw(canvas, rect)
+                if (tmp) {
+                    needRedraw = true
+                }
+            }
+        } else {
+            for (serie in series) {
+                val tmp = serie.onDraw(canvas, rect)
+                if (tmp) {
+                    needRedraw = true
+                }
             }
         }
         if (needRedraw) {
             postDelayed({ this.invalidate() }, animator.getDelay().toLong())
-        }
+        
         super.onDraw(canvas)
     }
 
