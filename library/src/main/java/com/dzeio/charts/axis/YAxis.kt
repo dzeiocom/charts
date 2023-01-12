@@ -5,9 +5,12 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import com.dzeio.charts.ChartType
 import com.dzeio.charts.ChartViewInterface
+import com.dzeio.charts.Entry
 import com.dzeio.charts.utils.drawDottedLine
 import kotlin.math.roundToInt
+import kotlin.math.sign
 
 class YAxis(
     private val view: ChartViewInterface
@@ -37,7 +40,7 @@ class YAxis(
 
     override var labelCount = 5
 
-    private var min: Float? = 0f
+    private var min: Float? = null
     private var max: Float? = null
 
     @Deprecated("use the new global function", replaceWith = ReplaceWith("YAxisInterface.addLine"))
@@ -68,6 +71,22 @@ class YAxis(
         if (view.series.isEmpty()) {
             return this.lines.keys.maxOrNull() ?: 0f
         }
+        if (view.type == ChartType.STACKED) {
+            val nList: ArrayList<Float> = arrayListOf()
+
+            for (serie in view.series) {
+                val size = serie.entries.size
+                while (nList.size < size) {
+                    nList.add(0f)
+                }
+                for (index in 0 until serie.entries.size) {
+                    val entry = serie.entries[index]
+                    nList[index] += entry.y
+                }
+            }
+
+            return nList.maxOf { it }
+        }
         val seriesMax = view.series
             .maxOf { serie ->
                 if (serie.getDisplayedEntries().isEmpty()) {
@@ -84,6 +103,22 @@ class YAxis(
         }
         if (view.series.isEmpty()) {
             return this.lines.keys.minOrNull() ?: 0f
+        }
+        if (view.type == ChartType.STACKED) {
+            val nList: ArrayList<Float> = arrayListOf()
+
+            for (serie in view.series) {
+                val size = serie.entries.size
+                while (nList.size < size) {
+                    nList.add(0f)
+                }
+                for (index in 0 until serie.entries.size) {
+                    val entry = serie.entries[index]
+                    nList[index] += entry.y
+                }
+            }
+
+            return nList.minOf { it }
         }
         return view.series
             .minOf { serie ->
@@ -167,5 +202,36 @@ class YAxis(
         if (height != null) {
             addLine(height, Line(true))
         }
+    }
+
+    override fun getPositionOnRect(entry: Entry, drawableSpace: RectF): Float {
+        if (view.type == ChartType.STACKED) {
+            val serie = view.series.find { it.entries.contains(entry) }
+            val index = view.series.indexOf(serie)
+            return getPositionOnRect(entry, drawableSpace, index)
+        }
+        return getPositionOnRect(entry.y, drawableSpace)
+    }
+
+    private fun getPositionOnRect(entry: Entry, drawableSpace: RectF, index: Int): Float {
+        if (index > 0) {
+            val entry2 = view.series[index - 1].entries.find { it.x == entry.x }
+            if (entry2 != null) {
+                // make a new """Entry""" containing the new Y
+                val isReverse = sign(entry2.y) != sign(entry.y)
+                val tmp = Entry(entry.x, if (isReverse) entry.y else entry.y + entry2.y)
+                return getPositionOnRect(tmp, drawableSpace, index - 1)
+            }
+        }
+        return getPositionOnRect(entry.y, drawableSpace)
+    }
+
+    override fun getPositionOnRect(point: Float, drawableSpace: RectF): Float {
+        val min = getYMin()
+        val max = getYMax()
+
+        return (1 - (point - min) / (max - min)) *
+            drawableSpace.height() +
+            drawableSpace.top
     }
 }

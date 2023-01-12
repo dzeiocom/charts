@@ -44,17 +44,12 @@ class BarSerie(
     override fun onDraw(canvas: Canvas, drawableSpace: RectF) {
         val displayedEntries = getDisplayedEntries()
         val barWidth = view.xAxis.getEntryWidth(drawableSpace).toFloat()
-        val max = view.yAxis.getYMax()
-        val min = view.yAxis.getYMin()
 
-        val zero = ((1 - -min / (max - min)) * drawableSpace.height() + drawableSpace.top).coerceIn(
-            drawableSpace.top, drawableSpace.bottom
-        )
+        val zero = view.yAxis.getPositionOnRect(0f, drawableSpace)
 
         for (entry in displayedEntries) {
             // calculated height in percent from 0 to 100
-            val top = ((1 - (entry.y - min) / (max - min)) * drawableSpace.height() + drawableSpace.top)
-                .coerceIn(drawableSpace.top, drawableSpace.bottom)
+            val top = view.yAxis.getPositionOnRect(entry, drawableSpace)
             var posX = drawableSpace.left + view.xAxis.getPositionOnRect(
                 entry,
                 drawableSpace

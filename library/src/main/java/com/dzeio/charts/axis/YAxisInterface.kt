@@ -3,6 +3,7 @@ package com.dzeio.charts.axis
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import com.dzeio.charts.Entry
 
 sealed interface YAxisInterface {
 
@@ -110,4 +111,24 @@ sealed interface YAxisInterface {
      * @param y the Y position of the line
      */
     fun removeLine(y: Float)
+
+    /**
+     * get the position of an [entry] Y position in the [drawableSpace]
+     *
+     * if the chart type is stacked it will automatically calculate the position depending on it
+     *
+     * @param entry the entry to search to position
+     * @param drawableSpace the space in which it should appear
+     * @return the float position (can be out of the [drawableSpace])
+     */
+    fun getPositionOnRect(entry: Entry, drawableSpace: RectF): Float
+
+    /**
+     * get the position of a [point] in the [drawableSpace]
+     *
+     * @param point the point to search to position
+     * @param drawableSpace the space in which it should appear
+     * @return the float position (can be out of the [drawableSpace])
+     */
+    fun getPositionOnRect(point: Float, drawableSpace: RectF): Float
 }
