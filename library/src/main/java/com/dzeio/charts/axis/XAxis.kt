@@ -52,7 +52,7 @@ class XAxis(
     }
 
     override fun getPositionOnRect(entry: Entry, drawableSpace: RectF): Double {
-        val result = drawableSpace.width() * (entry.x - x) / getDataWidth()
+        val result = drawableSpace.left + drawableSpace.width() * (entry.x - x) / getDataWidth()
         if (view.type == ChartType.GROUPED) {
             val serie = view.series.find { it.entries.contains(entry) }
             val index = view.series.indexOf(serie)

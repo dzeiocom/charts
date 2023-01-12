@@ -25,6 +25,12 @@ sealed class BaseSerie(
     override var yAxisPosition: YAxisPosition = YAxisPosition.RIGHT
 
     override var entries: ArrayList<Entry> = arrayListOf()
+        set(values) {
+            for (value in values) {
+                value.serie = this
+            }
+            field = values
+        }
 
     override fun getDisplayedEntries(): ArrayList<Entry> {
         val minX = view.xAxis.x
