@@ -18,5 +18,5 @@ trim_trailing_whitespace = false
 
 
 # Java/Kotlin Standards
-[*.{java,kt,kts,gradle}]
+[*.{java,kt,kts,gradle,xml}]
 indent_style = space

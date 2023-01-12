@@ -39,15 +39,39 @@ class MainFragment : Fragment() {
             animator.duration = 750
 
             // transform the chart into a grouped chart
-            type = ChartType.STACKED
+            type = ChartType.GROUPED
+            yAxis.setYMin(0f)
 
             // utils function to use Material3 auto colors
             materielTheme(this, requireView())
             serie2.barPaint.color = Color.RED
 
             // give the serie it's entries
-            serie1.entries = generateRandomDataset(1)
-            serie2.entries = generateRandomDataset(1)
+            serie1.entries = generateRandomDataset(5)
+            serie2.entries = generateRandomDataset(5)
+
+            // refresh the Chart
+            refresh()
+        }
+
+        binding.chartStacked.apply {
+            // setup the Serie
+            val serie1 = BarSerie(this)
+            val serie2 = BarSerie(this)
+
+            animator.duration = 750
+
+            // transform the chart into a grouped chart
+            type = ChartType.STACKED
+            yAxis.setYMin(0f)
+
+            // utils function to use Material3 auto colors
+            materielTheme(this, requireView())
+            serie2.barPaint.color = Color.RED
+
+            // give the serie it's entries
+            serie1.entries = generateRandomDataset(10)
+            serie2.entries = generateRandomDataset(10)
 
             // refresh the Chart
             refresh()
@@ -70,6 +94,7 @@ class MainFragment : Fragment() {
         binding.chartBar.apply {
             // setup the Serie
             val serie = BarSerie(this)
+            yAxis.setYMin(0f)
 
             // utils function to use Material3 auto colors
             materielTheme(this, requireView())

@@ -47,9 +47,7 @@ class LineSerie(
             if (displayedEntries.find { it.x == key } == null) iterator.remove()
         }
 
-        val zero = ((1 - -min / (max - min)) * drawableSpace.height() + drawableSpace.top).coerceIn(
-            drawableSpace.top, drawableSpace.bottom
-        )
+        val zero = view.yAxis.getPositionOnRect(0f, drawableSpace)
 
         for (entry in displayedEntries) {
 

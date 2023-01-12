@@ -148,7 +148,7 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         }
         if (needRedraw) {
             postDelayed({ this.invalidate() }, animator.getDelay().toLong())
-        
+        }
         super.onDraw(canvas)
     }
 
