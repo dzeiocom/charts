@@ -35,8 +35,9 @@ sealed interface SerieInterface {
      *
      * @param canvas the canvas to draw on
      * @param drawableSpace the space you are allowed to draw on
+     * @return do the serie need to be drawn again or not
      */
-    fun onDraw(canvas: Canvas, drawableSpace: RectF)
+    fun onDraw(canvas: Canvas, drawableSpace: RectF): Boolean
 
     /**
      * run when manually refreshing the system

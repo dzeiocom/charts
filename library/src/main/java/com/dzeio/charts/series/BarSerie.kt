@@ -41,19 +41,44 @@ class BarSerie(
 
     private val rect = Rect()
 
-    override fun onDraw(canvas: Canvas, drawableSpace: RectF) {
+    private var entriesCurrentY: HashMap<Double, AnimationProgress> = hashMapOf()
+
+    override fun onDraw(canvas: Canvas, drawableSpace: RectF): Boolean {
         val displayedEntries = getDisplayedEntries()
         val barWidth = view.xAxis.getEntryWidth(drawableSpace).toFloat()
 
         val zero = view.yAxis.getPositionOnRect(0f, drawableSpace)
 
+        var needUpdate = false
+
+        val iterator = entriesCurrentY.iterator()
+        while (iterator.hasNext()) {
+            val key = iterator.next().key
+            if (displayedEntries.find { it.x == key } == null) iterator.remove()
+        }
+
         for (entry in displayedEntries) {
+            if (entriesCurrentY[entry.x] == null) {
+                entriesCurrentY[entry.x] = AnimationProgress(zero)
+            }
+
             // calculated height in percent from 0 to 100
-            val top = view.yAxis.getPositionOnRect(entry, drawableSpace)
+            var top = view.yAxis.getPositionOnRect(entry, drawableSpace)
             var posX = drawableSpace.left + view.xAxis.getPositionOnRect(
                 entry,
                 drawableSpace
             ).toFloat()
+
+            // change value with the animator
+            if (!entriesCurrentY[entry.x]!!.finished) {
+                val newY = view.animator.updateValue(top, entriesCurrentY[entry.x]!!.value, zero)
+                if (!needUpdate && top != newY) {
+                    needUpdate = true
+                }
+                entriesCurrentY[entry.x]!!.finished = top == newY
+                top = newY
+                entriesCurrentY[entry.x]!!.value = top
+            }
 
             val right = (posX + barWidth).coerceAtMost(drawableSpace.right)
 
@@ -134,6 +159,8 @@ class BarSerie(
                 if (doDisplayIn) textPaint else textExternalPaint
             )
         }
+
+        return needUpdate
     }
 
     override fun refresh() {

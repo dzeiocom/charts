@@ -24,6 +24,11 @@
                 android:layout_height="200dp" />
 
             <com.dzeio.charts.ChartView
+                android:id="@+id/chart_stacked"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+            <com.dzeio.charts.ChartView
                 android:id="@+id/chart_customization"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />

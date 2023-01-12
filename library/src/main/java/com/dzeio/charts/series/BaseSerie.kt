@@ -15,6 +15,11 @@ sealed class BaseSerie(
         const val TAG = "Charts/BaseSerie"
     }
 
+    protected data class AnimationProgress(
+        var value: Float,
+        var finished: Boolean = false
+    )
+
     override var formatValue: (entry: Entry) -> String = { entry -> entry.y.roundToInt().toString()}
 
     override var yAxisPosition: YAxisPosition = YAxisPosition.RIGHT
@@ -31,7 +36,7 @@ sealed class BaseSerie(
         for (i in 0 until entries.size) {
             val it = entries[i]
             if (it.x in minX..maxX) {
-                if (result.size === 0 && i > 0) {
+                if (result.size == 0 && i > 0) {
                     result.add((entries[i - 1]))
                 }
                 lastIndex = i
@@ -43,8 +48,9 @@ sealed class BaseSerie(
             result.add(entries [lastIndex + 1])
         }
 
+        result.sortBy { it.x }
         return result
     }
 
-    abstract override fun onDraw(canvas: Canvas, drawableSpace: RectF)
+    abstract override fun onDraw(canvas: Canvas, drawableSpace: RectF): Boolean
 }
