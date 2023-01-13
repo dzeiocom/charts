@@ -205,6 +205,10 @@ class YAxis(
         lines[y] = line
     }
 
+    override fun addLine(y: Float) {
+        this.addLine(y, Line())
+    }
+
     override fun removeLine(y: Float) {
         lines.remove(y)
     }
