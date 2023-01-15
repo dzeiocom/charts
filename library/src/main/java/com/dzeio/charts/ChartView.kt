@@ -184,8 +184,8 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
         annotator.onDraw(canvas, seriesRect)
 
-            postDelayed({ this.invalidate() }, animator.getDelay().toLong())
-        }
+        postDelayed({ this.invalidate() }, animator.getDelay().toLong())
+
         super.onDraw(canvas)
     }
 
