@@ -8,5 +8,21 @@
     <fragment
         android:id="@+id/MainFragment"
         android:name="com.dzeio.chartstest.ui.MainFragment"
-        tools:layout="@layout/fragment_main"/>
+        android:label="Select the Graph you want to try out"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_MainFragment_to_ChartFragment"
+            app:destination="@id/ChartFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ChartFragment"
+        android:name="com.dzeio.chartstest.ui.ChartFragment"
+        android:label="Chart"
+        tools:layout="@layout/fragment_chart">
+
+        <argument
+            android:name="chart_type"
+            app:argType="string" />
+    </fragment>
 </navigation>

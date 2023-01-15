@@ -18,6 +18,20 @@
             android:divider="@drawable/shape_divider"
             android:padding="16dp">
 
+            <Button
+                android:layout_width="match_parent"
+                android:id="@+id/goto_barchart"
+                android:text="BarChart"
+                android:layout_weight="1"
+                android:layout_height="0dp"/>
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:id="@+id/goto_linechart"
+                android:text="LineChart"
+                android:layout_weight="1"
+                android:layout_height="0dp"/>
             <com.dzeio.charts.ChartView
                 android:id="@+id/chart_grouped"
                 android:layout_width="match_parent"

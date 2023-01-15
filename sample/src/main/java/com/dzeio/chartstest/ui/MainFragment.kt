@@ -6,19 +6,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.dzeio.charts.ChartType
-import com.dzeio.charts.ChartView
-import com.dzeio.charts.Entry
 import com.dzeio.charts.series.BarSerie
 import com.dzeio.charts.series.LineSerie
 import com.dzeio.chartstest.databinding.FragmentMainBinding
-import com.google.android.material.color.MaterialColors
+import com.dzeio.chartstest.utils.MaterialUtils
+import com.dzeio.chartstest.utils.Utils.generateRandomDataset
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
+    private val months = arrayListOf(
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +44,18 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.gotoBarchart.setOnClickListener {
+            findNavController().navigate(
+                MainFragmentDirections.actionMainFragmentToChartFragment("barchart")
+            )
+        }
+
+        binding.gotoLinechart.setOnClickListener {
+            findNavController().navigate(
+                MainFragmentDirections.actionMainFragmentToChartFragment("linechart")
+            )
+        }
 
         binding.chartGrouped.apply {
             // setup the Serie
@@ -43,12 +69,15 @@ class MainFragment : Fragment() {
             yAxis.setYMin(0f)
 
             // utils function to use Material3 auto colors
-            materielTheme(this, requireView())
+            MaterialUtils.materielTheme(this, requireView())
             serie2.barPaint.color = Color.RED
 
             // give the serie it's entries
             serie1.entries = generateRandomDataset(5)
             serie2.entries = generateRandomDataset(5)
+
+            annotator.annotationTitleFormat = { "${it.y.roundToInt()}$" }
+            annotator.annotationSubTitleFormat = { months[it.x.roundToInt()] }
 
             // refresh the Chart
             refresh()
@@ -66,7 +95,7 @@ class MainFragment : Fragment() {
             yAxis.setYMin(0f)
 
             // utils function to use Material3 auto colors
-            materielTheme(this, requireView())
+            MaterialUtils.materielTheme(this, requireView())
             serie2.barPaint.color = Color.RED
 
             // give the serie it's entries
@@ -82,7 +111,7 @@ class MainFragment : Fragment() {
             val serie = LineSerie(this)
 
             // utils function to use Material3 auto colors
-            materielTheme(this, requireView())
+            MaterialUtils.materielTheme(this, requireView())
 
             // give the serie its entries
             serie.entries = generateRandomDataset(10)
@@ -97,7 +126,7 @@ class MainFragment : Fragment() {
             yAxis.setYMin(0f)
 
             // utils function to use Material3 auto colors
-            materielTheme(this, requireView())
+            MaterialUtils.materielTheme(this, requireView())
 
             // give the serie its entries
             serie.entries = generateRandomDataset(10)
@@ -112,11 +141,12 @@ class MainFragment : Fragment() {
             val serie2 = LineSerie(this)
 
             // utils function to use Material3 auto colors
-            materielTheme(this, requireView())
+            MaterialUtils.materielTheme(this, requireView())
 
             // give the series their entries
-            serie2.entries = generateRandomDataset(20, -50, 50)
-            serie1.entries = generateRandomDataset(20, -50, 50).apply {
+            val xStep = 1
+            serie2.entries = generateRandomDataset(20, -50, 50, xStep)
+            serie1.entries = generateRandomDataset(20, -50, 50, xStep).apply {
                 for (idx in 0 until size) {
                     val compared = serie2.entries[idx]
                     val toCompare = this[idx]
@@ -163,7 +193,7 @@ class MainFragment : Fragment() {
                 scrollEnabled = true
 
                 // set the width of the datas
-                dataWidth = 10.0
+                dataWidth = 10.0 * xStep
 
                 // change the number of labels displayed
                 labelCount = 5
@@ -185,79 +215,5 @@ class MainFragment : Fragment() {
         _binding = null
     }
 
-    /**
-     * Generate a random dataset
-     */
-    private fun generateRandomDataset(size: Int = 100, min: Int = 0, max: Int = 100): ArrayList<Entry> {
-        val dataset: ArrayList<Entry> = arrayListOf()
 
-        for (i in 0 until size) {
-            dataset.add(Entry(
-                i.toDouble(),
-                Random.nextInt(min, max).toFloat()
-            ))
-        }
-
-        return dataset
-    }
-
-    /**
-     * Apply Material3 theme to a [ChartView]
-     */
-    private fun materielTheme(chart: ChartView, view: View) {
-
-        chart.apply {
-            yAxis.apply {
-                textLabel.color = MaterialColors.getColor(
-                    view,
-                    com.google.android.material.R.attr.colorOnPrimaryContainer
-                )
-                linePaint.color = MaterialColors.getColor(
-                    view,
-                    com.google.android.material.R.attr.colorOnPrimaryContainer
-                )
-                goalLinePaint.color = MaterialColors.getColor(
-                    view,
-                    com.google.android.material.R.attr.colorError
-                )
-            }
-
-            xAxis.apply {
-                textPaint.color = MaterialColors.getColor(
-                    view,
-                    com.google.android.material.R.attr.colorOnPrimaryContainer
-                )
-            }
-
-            for (serie in series) {
-                if (serie is BarSerie) {
-                    serie.apply {
-                        barPaint.color = MaterialColors.getColor(
-                            view,
-                            com.google.android.material.R.attr.colorPrimary
-                        )
-                        textPaint.color = MaterialColors.getColor(
-                            view,
-                            com.google.android.material.R.attr.colorOnPrimary
-                        )
-                        textExternalPaint.color = MaterialColors.getColor(
-                            view,
-                            com.google.android.material.R.attr.colorPrimary
-                        )
-                    }
-                } else if (serie is LineSerie) {
-                    serie.apply {
-                        linePaint.color = MaterialColors.getColor(
-                            view,
-                            com.google.android.material.R.attr.colorPrimary
-                        )
-                        textPaint.color = MaterialColors.getColor(
-                            view,
-                            com.google.android.material.R.attr.colorOnPrimary
-                        )
-                    }
-                }
-            }
-        }
-    }
 }
