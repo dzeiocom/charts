@@ -94,7 +94,7 @@ class LineSerie(
                         previousPosY >= drawableSpace.bottom ||
                         top >= drawableSpace.top &&
                         previousPosY <= drawableSpace.bottom
-                        )
+                    )
                 )
 
             // draw smol point
@@ -116,7 +116,6 @@ class LineSerie(
                 val dx = abs(posX - px)
 
                 if (previousPosX < drawableSpace.left) {
-
                     val ratio = dy / dx
 
                     val dcx = abs(px)
@@ -127,7 +126,6 @@ class LineSerie(
                     startX = drawableSpace.left
                     debugPaint.color = Color.YELLOW
                 } else if (posX > drawableSpace.right) {
-
                     val ratio = dy / dx
 
                     val dcx = posX - drawableSpace.right
@@ -139,7 +137,10 @@ class LineSerie(
                     debugPaint.color = Color.GRAY
                 }
 
-                if (startX == previousPosX && (previousPosY > drawableSpace.bottom || previousPosY < drawableSpace.top)) {
+                if (
+                    startX == previousPosX &&
+                    (previousPosY > drawableSpace.bottom || previousPosY < drawableSpace.top)
+                ) {
                     val dvb = if (top > py) top else drawableSpace.bottom - top
 
                     val ratio = dx / dy
