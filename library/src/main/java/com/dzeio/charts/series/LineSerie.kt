@@ -88,7 +88,8 @@ class LineSerie(
                     drawableSpace.contains(previousPosX, previousPosY)
                 ) || (
                     previousPosX != null &&
-                    previousPosY != null && (
+                    previousPosY != null &&
+                    posX < drawableSpace.right && (
                         top <= drawableSpace.top &&
                         previousPosY >= drawableSpace.bottom ||
                         top >= drawableSpace.top &&
@@ -111,30 +112,34 @@ class LineSerie(
 
                 val py = previousPosY
                 val px = previousPosX
+                val dy = abs(py - top)
+                val dx = abs(posX - px)
 
-                // calculate distance from bottom left
-                val dblx = abs(previousPosX)
-                val dbly = abs(py - drawableSpace.bottom)
-                val sliceHorizontal = dbly > dblx || px > 0
+                if (previousPosX < drawableSpace.left) {
 
-                if (!sliceHorizontal && (previousPosX < drawableSpace.left || previousPosX > drawableSpace.right)) {
-                    val dy = abs(py - top)
-                    val dx = posX - px
+                    val ratio = dy / dx
 
-                    val ratio = dx / dy
+                    val dcx = abs(px)
+                    val dcy = dcx * ratio
 
-                    val dcy = abs(px)
-                    val dcx = dcy * ratio
-
-                    val nx = px + dcx
-                    startY = nx
+                    val ny = if (startY > stopY) py - dcy else py + dcy
+                    startY = ny
                     startX = drawableSpace.left
                     debugPaint.color = Color.YELLOW
+                } else if (posX > drawableSpace.right) {
+
+                    val ratio = dy / dx
+
+                    val dcx = posX - drawableSpace.right
+                    val dcy = dcx * ratio
+
+                    val ny = if (py > top) top + dcy else top - dcy
+                    stopY = ny
+                    stopX = drawableSpace.right
+                    debugPaint.color = Color.GRAY
                 }
 
-                if (sliceHorizontal && (previousPosY > drawableSpace.bottom || previousPosY < drawableSpace.top)) {
-                    val dy = abs(py - top)
-                    val dx = posX - px
+                if (startX == previousPosX && (previousPosY > drawableSpace.bottom || previousPosY < drawableSpace.top)) {
                     val dvb = if (top > py) top else drawableSpace.bottom - top
 
                     val ratio = dx / dy
@@ -147,9 +152,7 @@ class LineSerie(
                     startY = if (top > py) drawableSpace.top else drawableSpace.bottom
                     debugPaint.color = Color.BLUE
                 }
-                if (sliceHorizontal && top > drawableSpace.bottom) {
-                    val dy = abs(top - py)
-                    val dx = posX - px
+                if (top > drawableSpace.bottom) {
                     val ratio = dx / dy
                     val dcy = drawableSpace.bottom - py
                     val dcx = dcy * ratio
@@ -161,7 +164,7 @@ class LineSerie(
                         debugPaint.color = Color.RED
                     }
                 }
-                canvas.drawLine(startX, startY, stopX, stopY, debugPaint)
+                canvas.drawLine(startX, startY, stopX, stopY, if (view.debug) debugPaint else linePaint)
             }
             previousPosX = posX
             previousPosY = top
