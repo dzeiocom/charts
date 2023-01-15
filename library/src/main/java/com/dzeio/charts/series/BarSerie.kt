@@ -175,4 +175,8 @@ class BarSerie(
     override fun refresh() {
 //        TODO("Not yet implemented")
     }
+
+    override fun resetAnimation() {
+        entriesCurrentY.clear()
+    }
 }

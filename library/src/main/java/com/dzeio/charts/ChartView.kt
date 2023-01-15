@@ -2,6 +2,7 @@ package com.dzeio.charts
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -37,6 +38,33 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
     override var series: ArrayList<SerieInterface> = arrayListOf()
 
     override var padding: Float = 8f
+
+    private var runUpdates = true
+
+    init {
+        viewTreeObserver.addOnScrollChangedListener {
+            val i = IntArray(2)
+            getLocationInWindow(i)
+            val deviceHeight = Resources.getSystem().displayMetrics.heightPixels
+            val displayed = i[1] in 0 until deviceHeight
+            if (!displayed) {
+                for (serie in series) {
+                    serie.resetAnimation()
+                    refresh()
+                    runUpdates = false
+                }
+            } else if (!runUpdates) {
+                runUpdates = true
+                refresh()
+            } else {
+                if (annotator.entry != null && annotator.hideOnScroll) {
+                    annotator.entry = null
+                    refresh()
+                }
+            }
+        }
+
+    }
 
     private val scroller = ChartScroll(this).apply {
         var lastMovementX = 0.0
@@ -105,6 +133,9 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
     }
 
     override fun refresh() {
+        if (!runUpdates) {
+            return
+        }
         // run Axis logics
         xAxis.refresh()
         yAxis.refresh()
@@ -120,10 +151,12 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 //        post(animator)
     }
 
+    private var lastRun = runUpdates
+
     override fun onDraw(canvas: Canvas) {
 
         // don't draw anything if everything is empty
-        if (series.isEmpty() || series.maxOf { it.entries.size } == 0) {
+        if (!runUpdates && lastRun == runUpdates && series.isEmpty() || series.maxOf { it.entries.size } == 0) {
             super.onDraw(canvas)
             return
         }

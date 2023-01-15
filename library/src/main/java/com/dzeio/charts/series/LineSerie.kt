@@ -177,4 +177,8 @@ class LineSerie(
     override fun refresh() {
 //        TODO("Not yet implemented")
     }
+
+    override fun resetAnimation() {
+        entriesCurrentY.clear()
+    }
 }
