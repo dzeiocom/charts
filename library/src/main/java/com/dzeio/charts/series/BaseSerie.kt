@@ -42,8 +42,8 @@ sealed class BaseSerie(
         for (i in 0 until entries.size) {
             val it = entries[i]
             if (it.x in minX..maxX) {
-                if (result.size == 0 && i > 0) {
-                    result.add((entries[i - 1]))
+                if (result.size < 2 && i > 0) {
+                    result.add(entries[i - 1])
                 }
                 lastIndex = i
                 result.add(it)

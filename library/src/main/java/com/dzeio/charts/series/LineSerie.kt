@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import com.dzeio.charts.ChartView
+import kotlin.math.abs
 
 class LineSerie(
     private val view: ChartView
@@ -80,15 +81,91 @@ class LineSerie(
                 paint.color = entry.color!!
             }
 
+            val doDraw = drawableSpace.contains(posX, top) ||
+                (
+                    previousPosX != null &&
+                    previousPosY != null &&
+                    drawableSpace.contains(previousPosX, previousPosY)
+                ) || (
+                    previousPosX != null &&
+                    previousPosY != null &&
+                    posX < drawableSpace.right && (
+                        top <= drawableSpace.top &&
+                        previousPosY >= drawableSpace.bottom ||
+                        top >= drawableSpace.top &&
+                        previousPosY <= drawableSpace.bottom
+                    )
+                )
+
             // draw smol point
-            if (posX < drawableSpace.right) {
+            if (drawableSpace.contains(posX, top)) {
                 canvas.drawCircle(posX, top, paint.strokeWidth, paint)
             }
 
             // draw line
-            if (previousPosX != null && previousPosY != null) {
-                canvas.drawLine(previousPosX, previousPosY, posX, top, paint)
+            if (doDraw && previousPosY != null && previousPosX != null) {
+                var startX = previousPosX
+                var startY = previousPosY
+                var stopX = posX
+                var stopY = top
+                val debugPaint = Paint(linePaint)
 
+                val py = previousPosY
+                val px = previousPosX
+                val dy = abs(py - top)
+                val dx = abs(posX - px)
+
+                if (previousPosX < drawableSpace.left) {
+                    val ratio = dy / dx
+
+                    val dcx = abs(px)
+                    val dcy = dcx * ratio
+
+                    val ny = if (startY > stopY) py - dcy else py + dcy
+                    startY = ny
+                    startX = drawableSpace.left
+                    debugPaint.color = Color.YELLOW
+                } else if (posX > drawableSpace.right) {
+                    val ratio = dy / dx
+
+                    val dcx = posX - drawableSpace.right
+                    val dcy = dcx * ratio
+
+                    val ny = if (py > top) top + dcy else top - dcy
+                    stopY = ny
+                    stopX = drawableSpace.right
+                    debugPaint.color = Color.GRAY
+                }
+
+                if (
+                    startX == previousPosX &&
+                    (previousPosY > drawableSpace.bottom || previousPosY < drawableSpace.top)
+                ) {
+                    val dvb = if (top > py) top else drawableSpace.bottom - top
+
+                    val ratio = dx / dy
+
+                    val dcy = dy - dvb
+                    val dcx = dcy * ratio
+
+                    val nx = px + dcx
+                    startX = nx
+                    startY = if (top > py) drawableSpace.top else drawableSpace.bottom
+                    debugPaint.color = Color.BLUE
+                }
+                if (top > drawableSpace.bottom) {
+                    val ratio = dx / dy
+                    val dcy = drawableSpace.bottom - py
+                    val dcx = dcy * ratio
+                    stopX = px + dcx
+                    stopY = drawableSpace.bottom
+                    if (startX != previousPosX) {
+                        debugPaint.color = Color.GREEN
+                    } else {
+                        debugPaint.color = Color.RED
+                    }
+                }
+                canvas.drawLine(startX, startY, stopX, stopY, if (view.debug) debugPaint else linePaint)
             }
             previousPosX = posX
             previousPosY = top
