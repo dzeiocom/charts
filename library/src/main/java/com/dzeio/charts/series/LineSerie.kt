@@ -20,13 +20,13 @@ class LineSerie(
 
     val linePaint = Paint().apply {
         isAntiAlias = true
-        color = Color.parseColor("#123456")
+        color = Color.parseColor("#64B5F6")
         strokeWidth = 5f
     }
 
     val textPaint = Paint().apply {
         isAntiAlias = true
-        color = Color.parseColor("#FC496D")
+        color = Color.BLACK
         textSize = 30f
         textAlign = Paint.Align.CENTER
     }

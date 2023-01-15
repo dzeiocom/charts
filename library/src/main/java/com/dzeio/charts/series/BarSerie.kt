@@ -22,12 +22,12 @@ class BarSerie(
 
     val barPaint = Paint().apply {
         isAntiAlias = true
-        color = Color.parseColor("#123456")
+        color = Color.parseColor("#64B5F6")
     }
 
     val textPaint = Paint().apply {
         isAntiAlias = true
-        color = Color.parseColor("#FC496D")
+        color = Color.WHITE
         textSize = 30f
         textAlign = Paint.Align.CENTER
     }
@@ -145,6 +145,15 @@ class BarSerie(
 
             if (textY < drawableSpace.top + rect.height()) {
                 textY = drawableSpace.top + rect.height()
+            }
+
+            if (
+                // check text not overflowing on left side
+                textX + barWidth / 2 > right ||
+                // check text not overflowing on right side
+                textX + barWidth / 2 > drawableSpace.right
+            ) {
+                continue
             }
 
             canvas.drawText(

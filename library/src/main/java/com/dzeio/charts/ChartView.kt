@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.dzeio.charts.axis.XAxis
 import com.dzeio.charts.axis.YAxis
+import com.dzeio.charts.components.Annotation
 import com.dzeio.charts.components.ChartScroll
 import com.dzeio.charts.series.SerieInterface
 
@@ -22,6 +23,8 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
     }
 
     override val animator: Animation = Animation()
+
+    override val annotator: Annotation = Annotation(this)
 
     override var type: ChartType = ChartType.BASIC
 
@@ -55,6 +58,34 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
             refresh()
         }
+        setOnChartClick { x, y ->
+            // Log.d("Chart clicked at", "$x, $y")
+            val dataset = series.map { it.getDisplayedEntries() }.reduce { acc, entries ->
+                acc.addAll(entries)
+                return@reduce acc
+            }
+            val entrySize = xAxis.getEntryWidth(seriesRect)
+            val clickPos = x
+            var entryFound = false
+            for (entry in dataset) {
+                val posX = xAxis.getPositionOnRect(entry, seriesRect)
+                // Log.d("pouet", "$posX, $clickPos, ${posX + entrySize}")
+                if (posX <= clickPos && clickPos <= posX + entrySize) {
+                    // Log.d("entry found!", "$entry")
+                    if (annotator.entry == entry) {
+                        annotator.entry = null
+                    } else {
+                        annotator.entry = entry
+                    }
+                    entryFound = true
+                    break
+                }
+            }
+            if (!entryFound && annotator.entry != null) {
+                annotator.entry = null
+            }
+            refresh()
+        }
 //        setOnZoomChanged {
 //            Log.d(TAG, "New Zoom: $it")
 //            zoom = (it * 1.2).toFloat()
@@ -64,6 +95,7 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
     // rect used for calculations
     private val rect = RectF()
+    private val seriesRect = RectF()
 
     // stroke used while in debug
     private val debugStrokePaint = Paint().apply {
@@ -121,7 +153,7 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         })
 
         // chart draw rectangle
-        rect.apply {
+        seriesRect.apply {
             set(
                 padding,
                 padding,
@@ -133,22 +165,24 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         var needRedraw = false
         if (type == ChartType.STACKED) {
             for (serie in series.reversed()) {
-                val tmp = serie.onDraw(canvas, rect)
+                val tmp = serie.onDraw(canvas, seriesRect)
                 if (tmp) {
                     needRedraw = true
                 }
             }
         } else {
             for (serie in series) {
-                val tmp = serie.onDraw(canvas, rect)
+                val tmp = serie.onDraw(canvas, seriesRect)
                 if (tmp) {
                     needRedraw = true
                 }
             }
         }
-        if (needRedraw) {
-            postDelayed({ this.invalidate() }, animator.getDelay().toLong())
-        }
+
+        annotator.onDraw(canvas, seriesRect)
+
+        postDelayed({ this.invalidate() }, animator.getDelay().toLong())
+
         super.onDraw(canvas)
     }
 

@@ -2,6 +2,7 @@ package com.dzeio.charts
 
 import com.dzeio.charts.axis.XAxisInterface
 import com.dzeio.charts.axis.YAxisInterface
+import com.dzeio.charts.components.Annotation
 import com.dzeio.charts.series.SerieInterface
 
 interface ChartViewInterface {
@@ -39,6 +40,8 @@ interface ChartViewInterface {
      * handle the series
      */
     var series: ArrayList<SerieInterface>
+
+    val annotator: Annotation
 
     /**
      * refresh and run pre-display logic the chart
