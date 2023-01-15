@@ -2,6 +2,7 @@ package com.dzeio.charts
 
 import com.dzeio.charts.axis.XAxisInterface
 import com.dzeio.charts.axis.YAxisInterface
+import com.dzeio.charts.components.Animation
 import com.dzeio.charts.components.Annotation
 import com.dzeio.charts.series.SerieInterface
 

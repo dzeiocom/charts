@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.dzeio.charts.axis.XAxis
 import com.dzeio.charts.axis.YAxis
+import com.dzeio.charts.components.Animation
 import com.dzeio.charts.components.Annotation
 import com.dzeio.charts.components.ChartScroll
 import com.dzeio.charts.series.SerieInterface
