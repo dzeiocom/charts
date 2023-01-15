@@ -22,12 +22,12 @@ class BarSerie(
 
     val barPaint = Paint().apply {
         isAntiAlias = true
-        color = Color.parseColor("#123456")
+        color = Color.parseColor("#64B5F6")
     }
 
     val textPaint = Paint().apply {
         isAntiAlias = true
-        color = Color.parseColor("#FC496D")
+        color = Color.WHITE
         textSize = 30f
         textAlign = Paint.Align.CENTER
     }

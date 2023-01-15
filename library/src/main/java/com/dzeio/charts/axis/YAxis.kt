@@ -20,14 +20,14 @@ class YAxis(
 
     override val textLabel = Paint().apply {
         isAntiAlias = true
-        color = Color.parseColor("#FC496D")
+        color = Color.BLACK
         textSize = 30f
         textAlign = Paint.Align.LEFT
     }
 
     override val linePaint = Paint().apply {
         isAntiAlias = true
-        color = Color.BLUE
+        color = Color.BLACK
     }
 
     override val goalLinePaint = Paint().apply {
