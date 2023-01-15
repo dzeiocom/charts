@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import com.dzeio.charts.ChartView
+import kotlin.math.abs
 
 class LineSerie(
     private val view: ChartView
@@ -80,15 +81,87 @@ class LineSerie(
                 paint.color = entry.color!!
             }
 
+            val doDraw = drawableSpace.contains(posX, top) ||
+                (
+                    previousPosX != null &&
+                    previousPosY != null &&
+                    drawableSpace.contains(previousPosX, previousPosY)
+                ) || (
+                    previousPosX != null &&
+                    previousPosY != null && (
+                        top <= drawableSpace.top &&
+                        previousPosY >= drawableSpace.bottom ||
+                        top >= drawableSpace.top &&
+                        previousPosY <= drawableSpace.bottom
+                        )
+                )
+
             // draw smol point
-            if (posX < drawableSpace.right) {
+            if (drawableSpace.contains(posX, top)) {
                 canvas.drawCircle(posX, top, paint.strokeWidth, paint)
             }
 
             // draw line
-            if (previousPosX != null && previousPosY != null) {
-                canvas.drawLine(previousPosX, previousPosY, posX, top, paint)
+            if (doDraw && previousPosY != null && previousPosX != null) {
+                var startX = previousPosX
+                var startY = previousPosY
+                var stopX = posX
+                var stopY = top
+                val debugPaint = Paint(linePaint)
 
+                val py = previousPosY
+                val px = previousPosX
+
+                // calculate distance from bottom left
+                val dblx = abs(previousPosX)
+                val dbly = abs(py - drawableSpace.bottom)
+                val sliceHorizontal = dbly > dblx || px > 0
+
+                if (!sliceHorizontal && (previousPosX < drawableSpace.left || previousPosX > drawableSpace.right)) {
+                    val dy = abs(py - top)
+                    val dx = posX - px
+
+                    val ratio = dx / dy
+
+                    val dcy = abs(px)
+                    val dcx = dcy * ratio
+
+                    val nx = px + dcx
+                    startY = nx
+                    startX = drawableSpace.left
+                    debugPaint.color = Color.YELLOW
+                }
+
+                if (sliceHorizontal && (previousPosY > drawableSpace.bottom || previousPosY < drawableSpace.top)) {
+                    val dy = abs(py - top)
+                    val dx = posX - px
+                    val dvb = if (top > py) top else drawableSpace.bottom - top
+
+                    val ratio = dx / dy
+
+                    val dcy = dy - dvb
+                    val dcx = dcy * ratio
+
+                    val nx = px + dcx
+                    startX = nx
+                    startY = if (top > py) drawableSpace.top else drawableSpace.bottom
+                    debugPaint.color = Color.BLUE
+                }
+                if (sliceHorizontal && top > drawableSpace.bottom) {
+                    val dy = abs(top - py)
+                    val dx = posX - px
+                    val ratio = dx / dy
+                    val dcy = drawableSpace.bottom - py
+                    val dcx = dcy * ratio
+                    stopX = px + dcx
+                    stopY = drawableSpace.bottom
+                    if (startX != previousPosX) {
+                        debugPaint.color = Color.GREEN
+                    } else {
+                        debugPaint.color = Color.RED
+                    }
+                }
+                canvas.drawLine(startX, startY, stopX, stopY, debugPaint)
             }
             previousPosX = posX
             previousPosY = top
