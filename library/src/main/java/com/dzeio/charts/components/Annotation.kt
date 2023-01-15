@@ -11,7 +11,6 @@ import android.view.View
 import com.dzeio.charts.ChartView
 import com.dzeio.charts.Entry
 
-
 class Annotation(
     private val view: ChartView
 ) {
@@ -60,7 +59,6 @@ class Annotation(
     }
 
     fun onDraw(canvas: Canvas, space: RectF) {
-
         if (entry == null || !enabled) {
             return
         }
@@ -148,16 +146,17 @@ class Annotation(
                 subTitlePaint
             )
         } else {
+            val left = finalRect.left + padding
             canvas.drawText(
                 yText,
-                finalRect.left + padding + ((contentWitdh - xTextWidth).toFloat() - padding) / 2f,
+                left + ((contentWitdh - xTextWidth).toFloat() - padding) / 2f,
                 finalRect.top + padding + (contentHeight.toFloat() + padding) / 2f,
                 titlePaint
             )
 
             canvas.drawText(
                 xText,
-                finalRect.left + padding + yTextWidth.toFloat() + padding + ((contentWitdh - yTextWidth).toFloat() - padding) / 2f,
+                left + yTextWidth.toFloat() + padding + ((contentWitdh - yTextWidth).toFloat() - padding) / 2f,
                 finalRect.top + padding + (contentHeight.toFloat() + padding) / 2f,
                 subTitlePaint
             )
