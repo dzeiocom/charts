@@ -147,6 +147,15 @@ class BarSerie(
                 textY = drawableSpace.top + rect.height()
             }
 
+            if (
+                // check text not overflowing on left side
+                textX + barWidth / 2 > right ||
+                // check text not overflowing on right side
+                textX + barWidth / 2 > drawableSpace.right
+            ) {
+                continue
+            }
+
             canvas.drawText(
                 text,
                 textX,
