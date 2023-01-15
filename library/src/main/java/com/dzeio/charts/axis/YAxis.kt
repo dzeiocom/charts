@@ -36,7 +36,7 @@ class YAxis(
         strokeWidth = 4f
     }
 
-    var onValueFormat: (value: Float) -> String = { it -> it.roundToInt().toString() }
+    override var onValueFormat: (value: Float) -> String = { it -> it.roundToInt().toString() }
 
     override var labelCount = 5
 
