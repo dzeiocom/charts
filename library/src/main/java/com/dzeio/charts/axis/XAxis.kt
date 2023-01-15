@@ -20,7 +20,7 @@ class XAxis(
 
     override var x: Double = 0.0
         set(value) {
-            val max = getXMax() - getDataWidth()
+            val max = getXMax()
             val min = getXMin()
 
             field = value.coerceIn(min, max.coerceAtLeast(min))
