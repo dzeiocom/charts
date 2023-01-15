@@ -129,8 +129,6 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             return
         }
 
-        lastRun = runUpdates
-
         if (debug) {
             // draw corners
             canvas.drawRect(rect.apply {
