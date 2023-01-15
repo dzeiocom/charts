@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.dzeio.charts.axis.XAxis
@@ -60,7 +59,7 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             refresh()
         }
         setOnChartClick { x, y ->
-            Log.d("Chart clicked at", "$x, $y")
+            // Log.d("Chart clicked at", "$x, $y")
             val dataset = series.map { it.getDisplayedEntries() }.reduce { acc, entries ->
                 acc.addAll(entries)
                 return@reduce acc
@@ -70,9 +69,9 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             var entryFound = false
             for (entry in dataset) {
                 val posX = xAxis.getPositionOnRect(entry, seriesRect)
-                Log.d("pouet", "$posX, $clickPos, ${posX + entrySize}")
+                // Log.d("pouet", "$posX, $clickPos, ${posX + entrySize}")
                 if (posX <= clickPos && clickPos <= posX + entrySize) {
-                    Log.d("entry found!", "$entry")
+                    // Log.d("entry found!", "$entry")
                     if (annotator.entry == entry) {
                         annotator.entry = null
                     } else {
