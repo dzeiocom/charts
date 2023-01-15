@@ -4,6 +4,7 @@ import android.view.MotionEvent
 import android.view.MotionEvent.INVALID_POINTER_ID
 import android.view.ScaleGestureDetector
 import android.view.View
+import kotlin.math.abs
 
 /**
  * Class handling the scroll/zoom for the library
@@ -31,6 +32,11 @@ class ChartScroll(view: View) {
 
     private var lastZoom: Float = 100f
     private var currentZoom: Float = 0f
+
+    private var onChartClick: ((x: Float, y: Float) -> Unit)? = null
+    fun setOnChartClick(fn: (x: Float, y: Float) -> Unit) {
+        onChartClick = fn
+    }
 
     private var onChartMoved: ((movementX: Float, movementY: Float) -> Unit)? = null
     fun setOnChartMoved(fn: (movementX: Float, movementY: Float) -> Unit) {
@@ -69,6 +75,8 @@ class ChartScroll(view: View) {
         }
     )
 
+    private var hasMoved = false
+
     /**
      * Code mostly stolen from https://developer.android.com/training/gestures/scale#drag
      */
@@ -99,8 +107,16 @@ class ChartScroll(view: View) {
                         ev.getX(pointerIndex) to ev.getY(pointerIndex)
                     }
 
-                posX += x - lastTouchX
-                posY += y - lastTouchY
+                val moveX = x - lastTouchX
+                val moveY = y - lastTouchY
+
+                if (!hasMoved && (abs(moveY) > 1 || abs(moveX) > 1)) {
+                    hasMoved = true
+                }
+
+                posX += moveX
+                posY += moveY
+
 
                 if (scrollEnabled) {
                     onChartMoved?.invoke(-posX, posY)
@@ -111,6 +127,15 @@ class ChartScroll(view: View) {
                 lastTouchY = y
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                if (!hasMoved) {
+                    val (x: Float, y: Float) =
+                        ev.findPointerIndex(activePointerId).let { pointerIndex ->
+                            // Calculate the distance moved
+                            ev.getX(pointerIndex) to ev.getY(pointerIndex)
+                        }
+                    onChartClick?.invoke(x, y)
+                }
+                hasMoved = false
                 onToggleScroll?.invoke(true)
                 activePointerId = INVALID_POINTER_ID
             }
