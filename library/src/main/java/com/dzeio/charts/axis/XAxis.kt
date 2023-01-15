@@ -52,13 +52,17 @@ class XAxis(
     }
 
     override fun getPositionOnRect(entry: Entry, drawableSpace: RectF): Double {
-        val result = drawableSpace.left + drawableSpace.width() * (entry.x - x) / getDataWidth()
+        val result = getPositionOnRect(entry.x, drawableSpace)
         if (view.type == ChartType.GROUPED) {
             val serie = view.series.find { it.entries.contains(entry) }
             val index = view.series.indexOf(serie)
             return result + getEntryWidth(drawableSpace) * index + spacing / 2 * index
         }
         return result
+    }
+
+    override fun getPositionOnRect(position: Double, drawableSpace: RectF): Double {
+        return drawableSpace.left + drawableSpace.width() * (position - x) / getDataWidth()
     }
 
     override fun getXMax(): Double {
@@ -79,7 +83,7 @@ class XAxis(
         }
     }
 
-    var onValueFormat: (value: Double) -> String = { it -> it.roundToInt().toString() }
+    override var onValueFormat: (value: Double) -> String = { it -> it.roundToInt().toString() }
 
     override fun onDraw(canvas: Canvas, space: RectF): Float {
         if (!enabled) {

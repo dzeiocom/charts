@@ -39,6 +39,8 @@ sealed interface YAxisInterface {
      */
     var scrollEnabled: Boolean
 
+    var onValueFormat: (value: Float) -> String
+
     /**
      * do the Zero line gets drawn?
      */

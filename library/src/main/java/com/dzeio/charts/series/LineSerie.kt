@@ -4,11 +4,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import com.dzeio.charts.ChartView
+import com.dzeio.charts.ChartViewInterface
 import kotlin.math.abs
 
 class LineSerie(
-    private val view: ChartView
+    private val view: ChartViewInterface
 ) : BaseSerie(view) {
 
     private companion object {
