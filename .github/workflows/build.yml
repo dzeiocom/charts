@@ -39,11 +39,11 @@ jobs:
           .github/scripts/gradlew_recursive.sh assembleDebug
       - name: Zip artifacts
         run: zip -r assemble.zip . -i '**/build/*.apk' '**/build/*.aab' '**/build/*.aar' '**/build/*.so'
-#       - name: Upload artifacts
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: assemble
-#           path: assemble.zip
+       - name: Upload artifacts
+         uses: actions/upload-artifact@v3
+         with:
+           name: assemble
+           path: assemble.zip
       - name: ktlint
         uses: ScaCap/action-ktlint@master
         with:
