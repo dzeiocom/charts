@@ -64,7 +64,6 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
                 }
             }
         }
-
     }
 
     private val scroller = ChartScroll(this).apply {
