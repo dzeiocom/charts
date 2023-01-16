@@ -154,7 +154,6 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
     private var lastRun = runUpdates
 
     override fun onDraw(canvas: Canvas) {
-
         // don't draw anything if everything is empty
         if (!runUpdates && lastRun == runUpdates && series.isEmpty() || series.maxOf { it.entries.size } == 0) {
             super.onDraw(canvas)
@@ -163,27 +162,35 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
         if (debug) {
             // draw corners
-            canvas.drawRect(rect.apply {
-                set(
-                    padding / 2,
-                    padding / 2,
-                    width.toFloat() - padding / 2,
-                    height.toFloat() - padding / 2
-                )
-            }, debugStrokePaint)
+            canvas.drawRect(
+                rect.apply {
+                    set(
+                        padding / 2,
+                        padding / 2,
+                        width.toFloat() - padding / 2,
+                        height.toFloat() - padding / 2
+                    )
+                },
+                debugStrokePaint
+            )
         }
-
 
         var bottom = xAxis.getHeight() ?: 0f
 
         // right distance from the yAxis
-        val rightDistance = yAxis.onDraw(canvas, rect.apply {
-            set(padding, padding, width.toFloat() - padding, height.toFloat() - bottom - padding)
-        })
+        val rightDistance = yAxis.onDraw(
+            canvas,
+            rect.apply {
+                set(padding, padding, width.toFloat() - padding, height.toFloat() - bottom - padding)
+            }
+        )
 
-        bottom = xAxis.onDraw(canvas, rect.apply {
-            set(padding, 0f, width.toFloat() - rightDistance - padding, height.toFloat() - padding)
-        })
+        bottom = xAxis.onDraw(
+            canvas,
+            rect.apply {
+                set(padding, 0f, width.toFloat() - rightDistance - padding, height.toFloat() - padding)
+            }
+        )
 
         // chart draw rectangle
         seriesRect.apply {
@@ -214,7 +221,9 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
         annotator.onDraw(canvas, seriesRect)
 
-        postDelayed({ this.invalidate() }, animator.getDelay().toLong())
+        if (needRedraw && runUpdates) {
+            postDelayed({ this.invalidate() }, animator.getDelay().toLong())
+        }
 
         super.onDraw(canvas)
     }
