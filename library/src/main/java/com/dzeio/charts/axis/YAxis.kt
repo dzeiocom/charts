@@ -148,17 +148,16 @@ class YAxis(
 
         val min = getYMin()
         val max = getYMax() - min
-        val bottom = space.bottom
         var maxWidth = 0f
 
-        val increment = space.height() / (labelCount - 1)
         val valueIncrement = max / (labelCount - 1)
         for (index in 0 until labelCount) {
+            val value = min + (valueIncrement * index)
             val text = onValueFormat(min + (valueIncrement * index))
             textLabel.getTextBounds(text, 0, text.length, rect)
             maxWidth = maxWidth.coerceAtLeast(rect.width().toFloat())
 
-            val posY = bottom - index * increment
+            val posY = getPositionOnRect(value, space)
 
             canvas.drawText(
                 text,
@@ -166,12 +165,13 @@ class YAxis(
                 (posY + rect.height() / 2).coerceAtLeast(rect.height().toFloat()),
                 textLabel
             )
-//            canvas.drawDottedLine(0f, posY, canvas.width.toFloat(), posY, 40f, linePaint)
             canvas.drawLine(space.left, posY, space.right - maxWidth - 32f, posY, linePaint)
         }
 
         for ((y, settings) in lines) {
-            val pos = ((1 - y - min / (getYMax() - min)) * space.height() + space.top)
+            val pos = getPositionOnRect(y, space)
+            val text = onValueFormat(y)
+            textLabel.getTextBounds(text, 0, text.length, rect)
             if (settings.dotted) {
                 canvas.drawDottedLine(
                     0f,
@@ -190,6 +190,12 @@ class YAxis(
                     settings.paint ?: linePaint
                 )
             }
+            canvas.drawText(
+                text,
+                space.width() - rect.width().toFloat(),
+                (pos + rect.height() / 2).coerceAtLeast(rect.height().toFloat()),
+                textLabel
+            )
         }
 
         return maxWidth + 32f

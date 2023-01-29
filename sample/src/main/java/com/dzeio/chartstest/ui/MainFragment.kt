@@ -1,6 +1,7 @@
 package com.dzeio.chartstest.ui
 
 import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.dzeio.charts.ChartType
 import com.dzeio.charts.ChartView
 import com.dzeio.charts.Entry
+import com.dzeio.charts.axis.Line
 import com.dzeio.charts.series.BarSerie
 import com.dzeio.charts.series.LineSerie
 import com.dzeio.chartstest.databinding.FragmentMainBinding
@@ -21,7 +23,8 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
@@ -144,14 +147,20 @@ class MainFragment : Fragment() {
                 labelCount = 11
 
                 // change how labels are displayed
-                onValueFormat = { "${it.roundToInt()}g"}
+                onValueFormat = { "${it.roundToInt()}g" }
 
                 // change labels colors
                 textLabel.color = Color.WHITE
 
-
                 // change line color
                 linePaint.color = Color.WHITE
+
+                // Add horizontal Lines
+                val paint: Paint = Paint(yAxis.linePaint).apply {
+                    strokeWidth = 8f
+                }
+                addLine(10f, Line(true, paint))
+                addLine(-10f, Line(true, paint))
 
                 // change the min/max high
                 setYMin(-20f)
@@ -192,10 +201,12 @@ class MainFragment : Fragment() {
         val dataset: ArrayList<Entry> = arrayListOf()
 
         for (i in 0 until size) {
-            dataset.add(Entry(
-                i.toDouble(),
-                Random.nextInt(min, max).toFloat()
-            ))
+            dataset.add(
+                Entry(
+                    i.toDouble(),
+                    Random.nextInt(min, max).toFloat()
+                )
+            )
         }
 
         return dataset
@@ -205,7 +216,6 @@ class MainFragment : Fragment() {
      * Apply Material3 theme to a [ChartView]
      */
     private fun materielTheme(chart: ChartView, view: View) {
-
         chart.apply {
             yAxis.apply {
                 textLabel.color = MaterialColors.getColor(
