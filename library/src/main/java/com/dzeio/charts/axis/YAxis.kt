@@ -68,9 +68,13 @@ class YAxis(
         if (max != null) {
             return max!!
         }
+
+        val max = this.lines.keys.maxOrNull() ?: 0f
+
         if (view.series.isEmpty()) {
-            return this.lines.keys.maxOrNull() ?: 0f
+            return max
         }
+
         if (view.type == ChartType.STACKED) {
             val nList: ArrayList<Float> = arrayListOf()
 
@@ -91,7 +95,8 @@ class YAxis(
                 }
             }
 
-            return nList.maxOf { it }
+            val localMax = nList.maxOf { it }
+            return if (localMax > max) localMax else max
         }
         val seriesMax = view.series
             .maxOf { serie ->
@@ -100,16 +105,20 @@ class YAxis(
                 }
                 return@maxOf serie.getDisplayedEntries().maxOf { entry -> entry.y }
             }
-        return seriesMax
+        return if (seriesMax > max) seriesMax else max
     }
 
     override fun getYMin(): Float {
         if (min != null) {
             return min!!
         }
+
+        val min = this.lines.keys.minOrNull() ?: 0f
+
         if (view.series.isEmpty()) {
-            return this.lines.keys.minOrNull() ?: 0f
+            return min
         }
+
         if (view.type == ChartType.STACKED) {
             val nList: ArrayList<Float> = arrayListOf()
 
@@ -130,15 +139,18 @@ class YAxis(
                 }
             }
 
-            return nList.minOf { it }
+            val localMin = nList.minOf { it }
+
+            return if (localMin < min) localMin else min
         }
-        return view.series
+        val localMin = view.series
             .minOf { serie ->
                 if (serie.getDisplayedEntries().isEmpty()) {
                     return@minOf 0f
                 }
                 return@minOf serie.getDisplayedEntries().minOf { entry -> entry.y }
             }
+        return if (localMin < min) localMin else min
     }
 
     override fun onDraw(canvas: Canvas, space: RectF): Float {
@@ -153,6 +165,12 @@ class YAxis(
         val valueIncrement = max / (labelCount - 1)
         for (index in 0 until labelCount) {
             val value = min + (valueIncrement * index)
+
+            // Ignore line if there is already one on the exact same point
+            if (lines.containsKey(value)) {
+                continue
+            }
+
             val text = onValueFormat(min + (valueIncrement * index))
             textLabel.getTextBounds(text, 0, text.length, rect)
             maxWidth = maxWidth.coerceAtLeast(rect.width().toFloat())
