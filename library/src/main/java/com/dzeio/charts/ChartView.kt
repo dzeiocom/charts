@@ -42,6 +42,9 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
         var lastMovementX = 0.0
         var lastMovementY = 0f
         setOnChartMoved { movementX, movementY ->
+            if (getDataset().isEmpty()) {
+                return@setOnChartMoved
+            }
             if (xAxis.scrollEnabled) {
                 xAxis.x += (movementX - lastMovementX) * xAxis.getDataWidth() / width
                 lastMovementX = movementX.toDouble()
@@ -59,6 +62,9 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             refresh()
         }
         setOnChartClick { x, y ->
+            if (getDataset().isEmpty()) {
+                return@setOnChartClick
+            }
             // Log.d("Chart clicked at", "$x, $y")
             val dataset = series.map { it.getDisplayedEntries() }.reduce { acc, entries ->
                 acc.addAll(entries)
