@@ -5,11 +5,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
-import com.dzeio.charts.ChartView
+import com.dzeio.charts.ChartViewInterface
 import com.dzeio.charts.utils.drawRoundRect
 
 class BarSerie(
-    private val view: ChartView
+    private val view: ChartViewInterface
 ) : BaseSerie(view) {
 
     private companion object {
@@ -48,6 +48,7 @@ class BarSerie(
         val barWidth = view.xAxis.getEntryWidth(drawableSpace).toFloat()
 
         val zero = view.yAxis.getPositionOnRect(0f, drawableSpace)
+            .coerceIn(drawableSpace.top, drawableSpace.bottom)
 
         var needUpdate = false
 
@@ -134,6 +135,10 @@ class BarSerie(
 
             textPaint.getTextBounds(text, 0, text.length, rect)
 
+            if (barWidth < rect.width()) {
+                continue
+            }
+
             // text center X
             val textX = (posX + barWidth / 2)
 
@@ -169,5 +174,9 @@ class BarSerie(
 
     override fun refresh() {
 //        TODO("Not yet implemented")
+    }
+
+    override fun resetAnimation() {
+        entriesCurrentY.clear()
     }
 }

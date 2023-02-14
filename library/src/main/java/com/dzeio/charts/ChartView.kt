@@ -2,15 +2,18 @@ package com.dzeio.charts
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.dzeio.charts.axis.XAxis
 import com.dzeio.charts.axis.YAxis
+import com.dzeio.charts.components.Animation
 import com.dzeio.charts.components.Annotation
 import com.dzeio.charts.components.ChartScroll
 import com.dzeio.charts.series.SerieInterface
@@ -38,10 +41,46 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
     override var padding: Float = 8f
 
+    private var runUpdates = true
+
+    init {
+        viewTreeObserver.addOnScrollChangedListener {
+            val actualPosition = Rect()
+            val isGlobalVisible = getGlobalVisibleRect(actualPosition)
+            val screen = Rect(
+                0,
+                0,
+                Resources.getSystem().displayMetrics.widthPixels,
+                Resources.getSystem().displayMetrics.heightPixels
+            )
+            val displayed = isShown && isGlobalVisible && Rect.intersects(actualPosition, screen)
+
+            if (!displayed) {
+                if (!runUpdates) {
+                    return@addOnScrollChangedListener
+                }
+                for (serie in series) {
+                    serie.resetAnimation()
+                    refresh()
+                    runUpdates = false
+                }
+            } else if (!runUpdates) {
+                runUpdates = true
+                refresh()
+            } else if (annotator.entry != null && annotator.hideOnScroll) {
+                annotator.entry = null
+                refresh()
+            }
+        }
+    }
+
     private val scroller = ChartScroll(this).apply {
         var lastMovementX = 0.0
         var lastMovementY = 0f
         setOnChartMoved { movementX, movementY ->
+            if (getDataset().isEmpty()) {
+                return@setOnChartMoved
+            }
             if (xAxis.scrollEnabled) {
                 xAxis.x += (movementX - lastMovementX) * xAxis.getDataWidth() / width
                 lastMovementX = movementX.toDouble()
@@ -59,6 +98,9 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             refresh()
         }
         setOnChartClick { x, y ->
+            if (getDataset().isEmpty()) {
+                return@setOnChartClick
+            }
             // Log.d("Chart clicked at", "$x, $y")
             val dataset = series.map { it.getDisplayedEntries() }.reduce { acc, entries ->
                 acc.addAll(entries)
@@ -105,6 +147,9 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
     }
 
     override fun refresh() {
+        if (!runUpdates) {
+            return
+        }
         // run Axis logics
         xAxis.refresh()
         yAxis.refresh()
@@ -120,37 +165,46 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 //        post(animator)
     }
 
-    override fun onDraw(canvas: Canvas) {
+    private var lastRun = runUpdates
 
+    override fun onDraw(canvas: Canvas) {
         // don't draw anything if everything is empty
-        if (series.isEmpty() || series.maxOf { it.entries.size } == 0) {
+        if (!runUpdates && lastRun == runUpdates && series.isEmpty() || series.maxOf { it.entries.size } == 0) {
             super.onDraw(canvas)
             return
         }
 
         if (debug) {
             // draw corners
-            canvas.drawRect(rect.apply {
-                set(
-                    padding / 2,
-                    padding / 2,
-                    width.toFloat() - padding / 2,
-                    height.toFloat() - padding / 2
-                )
-            }, debugStrokePaint)
+            canvas.drawRect(
+                rect.apply {
+                    set(
+                        padding / 2,
+                        padding / 2,
+                        width.toFloat() - padding / 2,
+                        height.toFloat() - padding / 2
+                    )
+                },
+                debugStrokePaint
+            )
         }
-
 
         var bottom = xAxis.getHeight() ?: 0f
 
         // right distance from the yAxis
-        val rightDistance = yAxis.onDraw(canvas, rect.apply {
-            set(padding, padding, width.toFloat() - padding, height.toFloat() - bottom - padding)
-        })
+        val rightDistance = yAxis.onDraw(
+            canvas,
+            rect.apply {
+                set(padding, padding, width.toFloat() - padding, height.toFloat() - bottom - padding)
+            }
+        )
 
-        bottom = xAxis.onDraw(canvas, rect.apply {
-            set(padding, 0f, width.toFloat() - rightDistance - padding, height.toFloat() - padding)
-        })
+        bottom = xAxis.onDraw(
+            canvas,
+            rect.apply {
+                set(padding, 0f, width.toFloat() - rightDistance - padding, height.toFloat() - padding)
+            }
+        )
 
         // chart draw rectangle
         seriesRect.apply {
@@ -181,7 +235,9 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
         annotator.onDraw(canvas, seriesRect)
 
-        postDelayed({ this.invalidate() }, animator.getDelay().toLong())
+        if (needRedraw && runUpdates) {
+            postDelayed({ this.invalidate() }, animator.getDelay().toLong())
+        }
 
         super.onDraw(canvas)
     }

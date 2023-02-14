@@ -1,4 +1,8 @@
-# Crash Handler
+<p align="center">
+  <img alt="Dzeio Charts logo" width="30%" src="sample/src/main/ic_launcher-playstore.png">
+</p>
+
+# Dzeio Charts
 
 Highly customizable and easy to use Chart library for android
 
@@ -9,6 +13,52 @@ Highly customizable and easy to use Chart library for android
 Add to you dependencies (check the latest release for the version):
 - (Gradle Kotlin DSL) Add `implementation("com.dzeio:charts:1.0.0")` 
 - (Gradle Groovy DSL) Add `implementation "com.dzeio:charts:1.0.0" `
+
+## Usage
+
+_note: full featured examples in the `sample` app_
+
+Add this to your views
+
+```xml
+<com.dzeio.charts.ChartView
+    android:id="@+id/chart_line"
+    android:layout_width="match_parent"
+    android:layout_height="200dp" />
+```
+
+
+```kotlin
+val chart = binding.chart // get the chart from the view
+// setup the Serie
+val serie = LineSerie(chart)
+
+// give the serie its entries
+serie.entries = // fill this with com.dzeio.charts.Entry
+serie.entries = arrayListOf(
+  Entry(
+      1,
+      53f
+  )
+)
+
+// refresh the Chart
+chart.refresh()
+```
+
+|               Basic charts                |           Fully customized chart            |           Grouped/Stacked charts            |
+|:-----------------------------------------:|:-------------------------------------------:|:-------------------------------------------:|
+| ![screenshot.jpg](.github/screenshot.jpg) | ![screenshot2.jpg](.github/screenshot2.jpg) | ![screenshot3.jpg](.github/screenshot3.jpg) |
+
+<p align="center">
+  <b>Example Usage</b>
+</p>
+<p align="center">in a health oriented step counter with a daily goal</p>
+<p align="center">
+  <img width="40%" src=".github/usage-example.jpg" />
+</p>
+
+_note: Every charts used above used a helper function to have Material 3 colors [See MainFragment.kt the materialTheme function](./sample/src/main/java/com/dzeio/chartstest/ui/MainFragment.kt)_
 
 ## Build
 

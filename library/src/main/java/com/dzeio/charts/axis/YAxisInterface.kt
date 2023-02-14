@@ -39,6 +39,8 @@ sealed interface YAxisInterface {
      */
     var scrollEnabled: Boolean
 
+    var onValueFormat: (value: Float) -> String
+
     /**
      * do the Zero line gets drawn?
      */
@@ -118,6 +120,11 @@ sealed interface YAxisInterface {
      * @param y the Y position of the line
      */
     fun removeLine(y: Float)
+
+    /**
+     * Remove every lines
+     */
+    fun clearLines()
 
     /**
      * get the position of an [entry] Y position in the [drawableSpace]

@@ -41,6 +41,8 @@ sealed interface XAxisInterface {
      */
     var scrollEnabled: Boolean
 
+    var onValueFormat: (value: Double) -> String
+
     /**
      * run when manually refreshing the system
      *
@@ -51,9 +53,22 @@ sealed interface XAxisInterface {
     /**
      * get the entry position on the rect
      *
+     * @param entry the entry to place
+     * @param drawableSpace the space it should go into
+     *
      * @return the left side of the position of the entry
      */
     fun getPositionOnRect(entry: Entry, drawableSpace: RectF): Double
+
+    /**
+     * get the entry position on the rect
+     *
+     * @param position the position of your point
+     * @param drawableSpace the space it should go into
+     *
+     * @return the left side of the position of the entry
+     */
+    fun getPositionOnRect(position: Double, drawableSpace: RectF): Double
 
     /**
      * get the maximum the X can get to

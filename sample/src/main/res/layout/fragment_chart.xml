@@ -18,24 +18,59 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/remove_value"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Remove Value"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp" />
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/remove_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Remove Value"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/add_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Add Value"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/remove_serie"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Remove Serie"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/add_serie"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Add Serie"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
 
             <Button
-                android:id="@+id/add_value"
+                android:id="@+id/switch_subtype"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Add Value"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp" />
+                android:text="Basic Chart"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1" />
         </LinearLayout>
+
     </ScrollView>
 </LinearLayout>
