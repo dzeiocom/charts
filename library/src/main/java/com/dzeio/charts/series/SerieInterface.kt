@@ -45,4 +45,6 @@ sealed interface SerieInterface {
      * this is where the pre-logic is handled to make [onDraw] quicker
      */
     fun refresh()
+
+    fun resetAnimation()
 }

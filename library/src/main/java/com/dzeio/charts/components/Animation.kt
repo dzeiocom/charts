@@ -1,4 +1,4 @@
-package com.dzeio.charts
+package com.dzeio.charts.components
 
 import kotlin.math.abs
 
