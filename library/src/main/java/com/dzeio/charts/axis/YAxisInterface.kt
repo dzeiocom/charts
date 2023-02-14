@@ -122,6 +122,11 @@ sealed interface YAxisInterface {
     fun removeLine(y: Float)
 
     /**
+     * Remove every lines
+     */
+    fun clearLines()
+
+    /**
      * get the position of an [entry] Y position in the [drawableSpace]
      *
      * if the chart type is stacked it will automatically calculate the position depending on it
