@@ -1,22 +1,16 @@
 root = true
 
-# Base Configuration
 [*]
-indent_style = tab
+indent_style = space
 indent_size = 4
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 max_line_length = 120
-end_of_line = lf
 
-# Markdown Standards
 [*.md]
-indent_style = space
 indent_size = 2
 trim_trailing_whitespace = false
 
-
-# Java/Kotlin Standards
-[*.{java,kt,kts,gradle,xml}]
-indent_style = space
+[*.{kt,kts}]
+ktlint_code_style = android
