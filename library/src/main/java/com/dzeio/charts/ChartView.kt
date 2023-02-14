@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -44,11 +45,20 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
     init {
         viewTreeObserver.addOnScrollChangedListener {
-            val i = IntArray(2)
-            getLocationInWindow(i)
-            val deviceHeight = Resources.getSystem().displayMetrics.heightPixels
-            val displayed = i[1] in 0 until deviceHeight
+            val actualPosition = Rect()
+            val isGlobalVisible = getGlobalVisibleRect(actualPosition)
+            val screen = Rect(
+                0,
+                0,
+                Resources.getSystem().displayMetrics.widthPixels,
+                Resources.getSystem().displayMetrics.heightPixels
+            )
+            val displayed = isShown && isGlobalVisible && Rect.intersects(actualPosition, screen)
+
             if (!displayed) {
+                if (!runUpdates) {
+                    return@addOnScrollChangedListener
+                }
                 for (serie in series) {
                     serie.resetAnimation()
                     refresh()
@@ -57,11 +67,9 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
             } else if (!runUpdates) {
                 runUpdates = true
                 refresh()
-            } else {
-                if (annotator.entry != null && annotator.hideOnScroll) {
-                    annotator.entry = null
-                    refresh()
-                }
+            } else if (annotator.entry != null && annotator.hideOnScroll) {
+                annotator.entry = null
+                refresh()
             }
         }
     }
