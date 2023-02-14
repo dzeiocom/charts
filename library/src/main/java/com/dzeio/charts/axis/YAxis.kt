@@ -237,6 +237,10 @@ class YAxis(
         lines.remove(y)
     }
 
+    override fun clearLines() {
+        lines.clear()
+    }
+
     @Deprecated("use the new global function", ReplaceWith("YAxisInterface.addLine"))
     override fun setGoalLine(height: Float?) {
         if (height != null) {
