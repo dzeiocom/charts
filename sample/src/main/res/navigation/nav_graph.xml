@@ -3,26 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/MainFragment">
+    app:startDestination="@id/main_fragment">
 
     <fragment
-        android:id="@+id/MainFragment"
-        android:name="com.dzeio.chartstest.ui.MainFragment"
-        android:label="Select the Graph you want to try out"
+        android:id="@+id/main_fragment"
+        android:name="com.dzeio.chartsapp.ui.MainFragment"
+        android:label="Dzeio Charts Examples"
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_MainFragment_to_ChartFragment"
-            app:destination="@id/ChartFragment" />
+            app:destination="@id/chart_fragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/ChartFragment"
-        android:name="com.dzeio.chartstest.ui.ChartFragment"
-        android:label="Chart"
+        android:id="@+id/chart_fragment"
+        android:name="com.dzeio.chartsapp.ui.ChartFragment"
+        android:label="Test the chart"
         tools:layout="@layout/fragment_chart">
 
         <argument
             android:name="chart_type"
+            app:nullable="true"
             app:argType="string" />
     </fragment>
 </navigation>

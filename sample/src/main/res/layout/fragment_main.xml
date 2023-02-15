@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".ui.MainFragment">
 
     <ScrollView
@@ -13,49 +14,44 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:showDividers="middle"
-            android:divider="@drawable/shape_divider"
-            android:padding="16dp">
+            android:layout_height="wrap_content">
+
+            <com.dzeio.charts.ChartView
+                android:id="@+id/barchart"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
 
             <Button
                 android:layout_width="match_parent"
                 android:id="@+id/goto_barchart"
                 android:text="BarChart"
-                android:layout_weight="1"
-                android:layout_height="0dp"/>
+                android:layout_marginBottom="16dp"
+                android:layout_height="wrap_content"/>
 
+
+            <com.dzeio.charts.ChartView
+                android:id="@+id/linechart"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
 
             <Button
                 android:layout_width="match_parent"
                 android:id="@+id/goto_linechart"
                 android:text="LineChart"
-                android:layout_weight="1"
-                android:layout_height="0dp"/>
-            <com.dzeio.charts.ChartView
-                android:id="@+id/chart_grouped"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_marginBottom="16dp"
+                android:layout_height="wrap_content"/>
+
 
             <com.dzeio.charts.ChartView
-                android:id="@+id/chart_stacked"
+                android:id="@+id/bothchart"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="100dp" />
 
-            <com.dzeio.charts.ChartView
-                android:id="@+id/chart_customization"
+            <Button
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
-
-            <com.dzeio.charts.ChartView
-                android:id="@+id/chart_bar"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
-
-            <com.dzeio.charts.ChartView
-                android:id="@+id/chart_line"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:id="@+id/goto_bar_line_chart"
+                android:text="Both barChart &amp; lineChart"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </ScrollView>

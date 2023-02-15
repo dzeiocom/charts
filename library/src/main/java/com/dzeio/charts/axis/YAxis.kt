@@ -162,7 +162,7 @@ class YAxis(
         val max = getYMax() - min
         var maxWidth = 0f
 
-        val valueIncrement = max / (labelCount - 1)
+        val valueIncrement = max / (labelCount - 1).coerceAtLeast(1)
         for (index in 0 until labelCount) {
             val value = min + (valueIncrement * index)
 

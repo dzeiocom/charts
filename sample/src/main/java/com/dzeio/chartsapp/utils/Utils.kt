@@ -1,4 +1,4 @@
-package com.dzeio.chartstest.utils
+package com.dzeio.chartsapp.utils
 
 import com.dzeio.charts.Entry
 import kotlin.random.Random.Default.nextInt

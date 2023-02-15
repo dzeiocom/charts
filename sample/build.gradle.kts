@@ -13,11 +13,11 @@ plugins {
 }
 
 android {
-    namespace = "com.dzeio.chartstest"
+    namespace = "com.dzeio.chartsapp"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.dzeio.chartstest"
+        applicationId = "com.dzeio.chartsapp"
         minSdk = 21
         targetSdk = 33
         versionCode = 1
@@ -52,7 +52,7 @@ dependencies {
     implementation(project(":library"))
 
     // Material Design
-    implementation("com.google.android.material:material:1.7.0")
+    implementation("com.google.android.material:material:1.8.0")
 
     // Navigation because I don't want to maintain basic transactions and shit
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")

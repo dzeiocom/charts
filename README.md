@@ -58,7 +58,7 @@ chart.refresh()
   <img width="40%" src=".github/usage-example.jpg" />
 </p>
 
-_note: Every charts used above used a helper function to have Material 3 colors [See MainFragment.kt the materialTheme function](./sample/src/main/java/com/dzeio/chartstest/ui/MainFragment.kt)_
+_note: Every charts used above used a helper function to have Material 3 colors [See MainFragment.kt the materialTheme function](./sample/src/main/java/com/dzeio/chartsapp/ui/MainFragment.kt)_
 
 ## Build
 

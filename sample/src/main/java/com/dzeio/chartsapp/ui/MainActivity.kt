@@ -1,4 +1,4 @@
-package com.dzeio.chartstest.ui
+package com.dzeio.chartsapp.ui
 
 import android.content.res.Configuration
 import android.os.Build
@@ -12,8 +12,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.dzeio.chartstest.R
-import com.dzeio.chartstest.databinding.ActivityMainBinding
+import com.dzeio.chartsapp.R
+import com.dzeio.chartsapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
 
         setSupportActionBar(binding.toolbar)
 
@@ -86,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.MainFragment
+                R.id.main_fragment
             )
         )
 
@@ -95,5 +94,4 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean =
         navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-
 }
