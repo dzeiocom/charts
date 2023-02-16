@@ -18,7 +18,7 @@ class YAxis(
 
     override var enabled = true
 
-    override val textLabel = Paint().apply {
+    override val textPaint = Paint().apply {
         isAntiAlias = true
         color = Color.BLACK
         textSize = 30f
@@ -36,6 +36,8 @@ class YAxis(
         strokeWidth = 4f
     }
 
+    override var keepGlobalLimits = true
+
     override var onValueFormat: (value: Float) -> String = { it -> it.roundToInt().toString() }
 
     override var labelCount = 5
@@ -51,20 +53,125 @@ class YAxis(
         }
 
     override var scrollEnabled: Boolean = false
+    override var zoomEnabled: Boolean = false
 
     private val rect = Rect()
 
-    override fun setYMin(yMin: Float?): YAxisInterface {
-        min = yMin
-        return this
+    override fun setCurrent(min: Float?, max: Float?): Boolean {
+        val previousMin = getCurrentMin()
+        val previousMax = getCurrentMax()
+        setCurrentMin(min)
+        if (previousMin != getCurrentMin()) {
+            setCurrentMin(previousMin)
+            return false
+        }
+        setCurrentMax(max)
+        if (previousMax != getCurrentMax()) {
+            setCurrentMax(previousMax)
+            setCurrentMin(previousMin)
+            return false
+        }
+        return true
     }
 
-    override fun setYMax(yMax: Float?): YAxisInterface {
-        max = yMax
-        return this
+    override fun setCurrentMin(value: Float?) {
+        if (keepGlobalLimits) {
+            min = (value ?: 0f).coerceIn(getMin(), getMax())
+            return
+        }
+        min = value
     }
 
-    override fun getYMax(): Float {
+    override fun setCurrentMax(value: Float?) {
+        if (keepGlobalLimits) {
+            max = (value ?: 0f).coerceIn(getMin(), getMax())
+            return
+        }
+        max = value
+    }
+
+    override fun getMax(): Float {
+        val max = this.lines.keys.maxOrNull() ?: 0f
+
+        if (view.series.isEmpty()) {
+            return max
+        }
+
+        if (view.type == ChartType.STACKED) {
+            val nList: ArrayList<Float> = arrayListOf()
+
+            for (serie in view.series) {
+                val size = serie.entries.size
+                while (nList.size < size) {
+                    nList.add(0f)
+                }
+                for (index in 0 until serie.entries.size) {
+                    val entry = serie.entries[index]
+                    if (sign(entry.y) <= 0f && nList[index] > 0f) {
+                        continue
+                    } else if (nList[index] < 0f && entry.y > 0f) {
+                        nList[index] = entry.y
+                        continue
+                    }
+                    nList[index] += entry.y
+                }
+            }
+
+            val localMax = nList.maxOf { it }
+            return if (localMax > max) localMax else max
+        }
+        val seriesMax = view.series
+            .maxOf { serie ->
+                if (serie.entries.isEmpty()) {
+                    return@maxOf 0f
+                }
+                return@maxOf serie.entries.maxOf { entry -> entry.y }
+            }
+        return if (seriesMax > max) seriesMax else max
+    }
+
+    override fun getMin(): Float {
+        val min = this.lines.keys.minOrNull() ?: 0f
+
+        if (view.series.isEmpty()) {
+            return min
+        }
+
+        if (view.type == ChartType.STACKED) {
+            val nList: ArrayList<Float> = arrayListOf()
+
+            for (serie in view.series) {
+                val size = serie.entries.size
+                while (nList.size < size) {
+                    nList.add(0f)
+                }
+                for (index in 0 until serie.entries.size) {
+                    val entry = serie.entries[index]
+                    if (sign(entry.y) >= 0f && nList[index] < 0f) {
+                        continue
+                    } else if (nList[index] > 0f && entry.y < 0f) {
+                        nList[index] = entry.y
+                        continue
+                    }
+                    nList[index] += entry.y
+                }
+            }
+
+            val localMin = nList.minOf { it }
+
+            return if (localMin < min) localMin else min
+        }
+        val localMin = view.series
+            .minOf { serie ->
+                if (serie.entries.isEmpty()) {
+                    return@minOf 0f
+                }
+                return@minOf serie.entries.minOf { entry -> entry.y }
+            }
+        return if (localMin < min) localMin else min
+    }
+
+    override fun getCurrentMax(): Float {
         if (max != null) {
             return max!!
         }
@@ -110,7 +217,7 @@ class YAxis(
         return if (seriesMax > max) seriesMax else max
     }
 
-    override fun getYMin(): Float {
+    override fun getCurrentMin(): Float {
         if (min != null) {
             return min!!
         }
@@ -162,8 +269,8 @@ class YAxis(
             return 0f
         }
 
-        val min = getYMin()
-        val max = getYMax() - min
+        val min = getCurrentMin()
+        val max = getCurrentMax() - min
         var maxWidth = 0f
 
         val valueIncrement = max / (labelCount - 1).coerceAtLeast(1)
@@ -176,7 +283,7 @@ class YAxis(
             }
 
             val text = onValueFormat(min + (valueIncrement * index))
-            textLabel.getTextBounds(text, 0, text.length, rect)
+            textPaint.getTextBounds(text, 0, text.length, rect)
             maxWidth = maxWidth.coerceAtLeast(rect.width().toFloat())
 
             val posY = getPositionOnRect(value, space)
@@ -185,7 +292,7 @@ class YAxis(
                 text,
                 space.width() - rect.width().toFloat(),
                 (posY + rect.height() / 2).coerceAtLeast(rect.height().toFloat()),
-                textLabel
+                textPaint
             )
             canvas.drawLine(space.left, posY, space.right - maxWidth - 32f, posY, linePaint)
         }
@@ -193,7 +300,7 @@ class YAxis(
         for ((y, settings) in lines) {
             val pos = getPositionOnRect(y, space)
             val text = onValueFormat(y)
-            textLabel.getTextBounds(text, 0, text.length, rect)
+            textPaint.getTextBounds(text, 0, text.length, rect)
             if (settings.dotted) {
                 canvas.drawDottedLine(
                     0f,
@@ -216,7 +323,7 @@ class YAxis(
                 text,
                 space.width() - rect.width().toFloat(),
                 (pos + rect.height() / 2).coerceAtLeast(rect.height().toFloat()),
-                textLabel
+                textPaint
             )
         }
 
@@ -274,11 +381,11 @@ class YAxis(
         return getPositionOnRect(entry.y, drawableSpace)
     }
 
-    override fun getPositionOnRect(point: Float, drawableSpace: RectF): Float {
-        val min = getYMin()
-        val max = getYMax()
+    override fun getPositionOnRect(position: Float, drawableSpace: RectF): Float {
+        val min = getCurrentMin()
+        val max = getCurrentMax()
 
-        return (1 - (point - min) / (max - min)) *
+        return (1 - (position - min) / (max - min)) *
             drawableSpace.height() +
             drawableSpace.top
     }

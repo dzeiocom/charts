@@ -1,5 +1,6 @@
 package com.dzeio.charts.components
 
+import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.INVALID_POINTER_ID
 import android.view.ScaleGestureDetector
@@ -9,7 +10,7 @@ import kotlin.math.abs
 /**
  * Class handling the scroll/zoom for the library
  */
-class ChartScroll(view: View) {
+class ChartScroll(private val view: View) {
 
     /**
      * Enabled the zoom/unzoom of datas
@@ -43,7 +44,7 @@ class ChartScroll(view: View) {
         onChartMoved = fn
     }
 
-    private var onZoomChanged: ((scale: Float) -> Unit)? = null
+    private var onZoomChanged: ((scaleX: Float, scaleY: Float) -> Unit)? = null
 
     /**
      * @param fn.scale Float starting from 100%
@@ -51,7 +52,7 @@ class ChartScroll(view: View) {
      * 99-%  zoom out,
      * 101+% zoom in
      */
-    fun setOnZoomChanged(fn: (scale: Float) -> Unit) {
+    fun setOnZoomChanged(fn: (scaleX: Float, scaleY: Float) -> Unit) {
         onZoomChanged = fn
     }
 
@@ -59,21 +60,22 @@ class ChartScroll(view: View) {
         view.context,
         object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
-                if (currentZoom != detector.scaleFactor) {
-                    currentZoom = detector.scaleFactor
-                    onZoomChanged?.invoke(lastZoom + -currentZoom + 1)
-                }
+                Log.d("ChartScroll", detector.scaleFactor.toString())
+                val scaleX = processScaling(detector.currentSpanX, detector.previousSpanX)
+                val scaleY = processScaling(detector.currentSpanY, detector.previousSpanY)
+                onZoomChanged?.invoke(
+                    1 - scaleY,
+                    1 - scaleX,
+                )
 
                 return super.onScale(detector)
             }
-
-            override fun onScaleEnd(detector: ScaleGestureDetector) {
-                super.onScaleEnd(detector)
-
-                lastZoom += -currentZoom + 1
-            }
         }
     )
+
+    private fun processScaling(current: Float, previous: Float): Float {
+        return if (previous > 0f) current / previous else 1f
+    }
 
     private var hasMoved = false
 
@@ -81,7 +83,6 @@ class ChartScroll(view: View) {
      * Code mostly stolen from https://developer.android.com/training/gestures/scale#drag
      */
     fun onTouchEvent(ev: MotionEvent): Boolean {
-
         if (zoomEnabled) {
             scaleGestureDetector.onTouchEvent(ev)
         }
@@ -116,7 +117,6 @@ class ChartScroll(view: View) {
 
                 posX += moveX
                 posY += moveY
-
 
                 if (scrollEnabled) {
                     onChartMoved?.invoke(-posX, posY)

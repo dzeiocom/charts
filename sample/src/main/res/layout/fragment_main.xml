@@ -32,7 +32,7 @@
             <com.dzeio.charts.ChartView
                 android:id="@+id/linechart"
                 android:layout_width="match_parent"
-                android:layout_height="100dp" />
+                android:layout_height="500dp" />
 
             <Button
                 android:layout_width="match_parent"

@@ -125,7 +125,7 @@ class ChartFragment : Fragment() {
                 binding.sliderXAxisScroll.visibility = View.VISIBLE
             } else {
                 chart.xAxis.dataWidth = null
-                chart.xAxis.x = 0.0
+                chart.xAxis.setCurrentMin(0.0)
                 binding.sliderXAxisScroll.visibility = View.GONE
             }
             chart.refresh()
