@@ -73,6 +73,11 @@ class Annotation(
 
         val xCenter = view.xAxis.getEntryWidth(space) / 2.0 + x
 
+        if (xCenter < space.left || xCenter > space.right) {
+            entry = null
+            return
+        }
+
         val xText = annotationSubTitleFormat.invoke(entry!!)
         val yText = annotationTitleFormat.invoke(entry!!)
 

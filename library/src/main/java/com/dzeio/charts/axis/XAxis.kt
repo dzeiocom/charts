@@ -92,18 +92,14 @@ class XAxis(
 
         var maxHeight = 0f
 
-        val graphIncrement = space.width() / (labelCount - 1)
-        val valueIncrement = getDataWidth() / (labelCount - 1)
+        val valueIncrement = getDataWidth() / (labelCount - 1).coerceAtLeast(1)
         for (index in 0 until labelCount) {
             val text = onValueFormat(x + valueIncrement * index)
             textPaint.getTextBounds(text, 0, text.length, rect)
+            getPositionOnRect(valueIncrement, space)
             maxHeight = maxHeight.coerceAtLeast(rect.height().toFloat() + 1)
 
-            var xPos = space.left + graphIncrement * index
-
-            if (xPos + rect.width() > space.right) {
-                xPos = space.right - rect.width()
-            }
+            val xPos = getPositionOnRect(x + valueIncrement * index, space).toFloat()
 
             canvas.drawText(
                 text,
@@ -134,8 +130,8 @@ class XAxis(
             .coerceIn(1.0, drawableSpace.width().toDouble())
 
         // handle grouped series
-        if (view.type == ChartType.GROUPED) {
-            return result / view.series.size - spacing / 2 * (view.series.size - 1)
+        if (view.type == ChartType.GROUPED && view.series.size > 1) {
+            return ((result - (spacing / 2 * view.series.size)) / view.series.size).coerceAtLeast(1.0)
         }
 
         return result
@@ -145,5 +141,4 @@ class XAxis(
         // TODO: handle the auto dataWidth better (still not sure it is good enough)
         return dataWidth ?: (getXMax() - getXMin() + 1)
     }
-
 }

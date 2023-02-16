@@ -22,7 +22,7 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
     View(context, attrs), ChartViewInterface {
 
     private companion object {
-        const val TAG = "Charts/ChartView"
+        const val TAG = "ChartView"
     }
 
     override val animator: Animation = Animation()
@@ -97,6 +97,10 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
             refresh()
         }
+        setOnToggleScroll {
+            // note: true == no scroll
+            parent?.requestDisallowInterceptTouchEvent(!it && (yAxis.scrollEnabled || xAxis.scrollEnabled))
+        }
         setOnChartClick { x, y ->
             if (getDataset().isEmpty()) {
                 return@setOnChartClick
@@ -161,15 +165,11 @@ class ChartView @JvmOverloads constructor(context: Context?, attrs: AttributeSet
 
         // invalidate the view
         invalidate()
-//        removeCallbacks(animator)
-//        post(animator)
     }
-
-    private var lastRun = runUpdates
 
     override fun onDraw(canvas: Canvas) {
         // don't draw anything if everything is empty
-        if (!runUpdates && lastRun == runUpdates && series.isEmpty() || series.maxOf { it.entries.size } == 0) {
+        if (!runUpdates || series.isEmpty() || series.maxOf { it.entries.size } == 0) {
             super.onDraw(canvas)
             return
         }
