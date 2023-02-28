@@ -69,10 +69,10 @@ class YAxis(
             return max!!
         }
 
-        val max = this.lines.keys.maxOrNull() ?: 0f
+        val max = this.lines.keys.maxOrNull()
 
         if (view.series.isEmpty()) {
-            return max
+            return max ?: 0f
         }
 
         if (view.type == ChartType.STACKED) {
@@ -96,6 +96,7 @@ class YAxis(
             }
 
             val localMax = nList.maxOf { it }
+            if (max == null) return localMax
             return if (localMax > max) localMax else max
         }
         val seriesMax = view.series
@@ -105,6 +106,7 @@ class YAxis(
                 }
                 return@maxOf serie.getDisplayedEntries().maxOf { entry -> entry.y }
             }
+        if (max == null) return seriesMax
         return if (seriesMax > max) seriesMax else max
     }
 
@@ -113,10 +115,10 @@ class YAxis(
             return min!!
         }
 
-        val min = this.lines.keys.minOrNull() ?: 0f
+        val min = this.lines.keys.minOrNull()
 
         if (view.series.isEmpty()) {
-            return min
+            return min ?: 0f
         }
 
         if (view.type == ChartType.STACKED) {
@@ -141,6 +143,7 @@ class YAxis(
 
             val localMin = nList.minOf { it }
 
+            if (min == null) return localMin
             return if (localMin < min) localMin else min
         }
         val localMin = view.series
@@ -150,6 +153,7 @@ class YAxis(
                 }
                 return@minOf serie.getDisplayedEntries().minOf { entry -> entry.y }
             }
+        if (min == null) return localMin
         return if (localMin < min) localMin else min
     }
 
