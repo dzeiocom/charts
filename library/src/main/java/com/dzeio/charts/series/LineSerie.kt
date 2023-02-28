@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import com.dzeio.charts.ChartViewInterface
+import com.dzeio.charts.utils.drawDottedLine
 import kotlin.math.abs
 
 class LineSerie(
@@ -24,6 +25,21 @@ class LineSerie(
         color = Color.parseColor("#64B5F6")
         strokeWidth = 5f
     }
+
+    /**
+     * is the line dotted
+     */
+    var dotted = false
+
+    /**
+     * do we display the points?
+     */
+    var displayPoints = true
+
+    /**
+     * do we display the lines
+     */
+    var displayLines = true
 
     val textPaint = Paint().apply {
         isAntiAlias = true
@@ -98,12 +114,12 @@ class LineSerie(
                 )
 
             // draw smol point
-            if (drawableSpace.contains(posX, top)) {
+            if (drawableSpace.contains(posX, top) && displayPoints) {
                 canvas.drawCircle(posX, top, paint.strokeWidth, paint)
             }
 
             // draw line
-            if (doDraw && previousPosY != null && previousPosX != null) {
+            if (doDraw && previousPosY != null && previousPosX != null && displayLines) {
                 var startX = previousPosX
                 var startY = previousPosY
                 var stopX = posX
@@ -165,7 +181,24 @@ class LineSerie(
                         debugPaint.color = Color.RED
                     }
                 }
-                canvas.drawLine(startX, startY, stopX, stopY, if (view.debug) debugPaint else linePaint)
+                if (dotted) {
+                    canvas.drawDottedLine(
+                        startX,
+                        startY,
+                        stopX,
+                        stopY,
+                        32f,
+                        if (view.debug) debugPaint else linePaint
+                    )
+                } else {
+                    canvas.drawLine(
+                        startX,
+                        startY,
+                        stopX,
+                        stopY,
+                        if (view.debug) debugPaint else linePaint
+                    )
+                }
             }
             previousPosX = posX
             previousPosY = top

@@ -138,6 +138,23 @@ class ChartFragment : Fragment() {
                 chart.refresh()
             }
         }
+
+        if (args.chartType === "linechart") {
+            binding.lineItem.visibility = View.VISIBLE
+
+            binding.lineDisplayLines.setOnCheckedChangeListener { _, isChecked ->
+                chart.series.forEach { (it as LineSerie).displayLines = isChecked }
+                chart.refresh()
+            }
+            binding.lineDisplayPoints.setOnCheckedChangeListener { _, isChecked ->
+                chart.series.forEach { (it as LineSerie).displayPoints = isChecked }
+                chart.refresh()
+            }
+            binding.lineDotted.setOnCheckedChangeListener { _, isChecked ->
+                chart.series.forEach { (it as LineSerie).dotted = isChecked }
+                chart.refresh()
+            }
+        }
     }
 
     private var lastGenerated = 0
