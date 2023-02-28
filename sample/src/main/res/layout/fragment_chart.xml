@@ -209,6 +209,36 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/line_item"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/line_dotted"
+                    android:text="Switch Dotted line"
+                    android:checked="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/line_display_points"
+                    android:text="Display points"
+                    android:checked="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/line_display_lines"
+                    android:text="Display lines"
+                    android:checked="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>
