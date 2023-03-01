@@ -43,13 +43,6 @@ class YAxis(
     private var min: Float? = null
     private var max: Float? = null
 
-    @Deprecated("use the new global function", replaceWith = ReplaceWith("YAxisInterface.addLine"))
-    override var drawZeroLine: Boolean = false
-        set(value) {
-            addLine(0f, Line())
-            field = value
-        }
-
     override var scrollEnabled: Boolean = false
 
     private val rect = Rect()
@@ -243,13 +236,6 @@ class YAxis(
 
     override fun clearLines() {
         lines.clear()
-    }
-
-    @Deprecated("use the new global function", ReplaceWith("YAxisInterface.addLine"))
-    override fun setGoalLine(height: Float?) {
-        if (height != null) {
-            addLine(height, Line(true))
-        }
     }
 
     override fun getPositionOnRect(entry: Entry, drawableSpace: RectF): Float {
