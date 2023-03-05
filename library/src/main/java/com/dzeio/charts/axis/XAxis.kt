@@ -66,21 +66,21 @@ class XAxis(
     }
 
     override fun getXMax(): Double {
-        return view.series.maxOf { serie ->
+        return view.series.maxOfOrNull { serie ->
             if (serie.entries.isEmpty()) {
                 return 0.0
             }
             serie.entries.maxOf { entry -> entry.x }
-        }
+        } ?: 0.0
     }
 
     override fun getXMin(): Double {
-        return view.series.minOf { serie ->
+        return view.series.minOfOrNull { serie ->
             if (serie.entries.isEmpty()) {
                 return 0.0
             }
             serie.entries.minOf { entry -> entry.x }
-        }
+        } ?: 0.0
     }
 
     override var onValueFormat: (value: Double) -> String = { it -> it.roundToInt().toString() }
