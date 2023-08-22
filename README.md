@@ -2,6 +2,18 @@
   <img alt="Dzeio Charts logo" width="30%" src="sample/src/main/ic_launcher-playstore.png">
 </p>
 
+<p align="center">
+  <a href="https://discord.gg/7Q47xwYwZ8">
+	<img src="https://img.shields.io/discord/1143555541004726272?color=%235865F2&label=Discord" alt="Discord Link">
+  </a>
+  <a href="https://github.com/dzeiocom/charts/stargazers">
+  	<img src="https://img.shields.io/github/stars/dzeiocom/charts?style=flat-square" alt="Github stars">
+  </a>
+  <a href="https://github.com/dzeiocom/charts/actions/workflows/build.yml">
+  	<img src="https://img.shields.io/github/actions/workflow/status/dzeiocom/charts/build.yml?style=flat-square" alt="Build passing" />
+  </a>
+</p>
+
 # Dzeio Charts
 
 Highly customizable and easy to use Chart library for android
