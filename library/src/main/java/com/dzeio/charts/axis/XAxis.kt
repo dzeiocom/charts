@@ -15,24 +15,24 @@ class XAxis(
 ) : XAxisInterface {
 
     private companion object {
-        const val TAG = "Charts/XAxis"
+        const val TAG = "XAxis"
     }
 
-    override var x: Double = 0.0
-        set(value) {
-            val max = getXMax()
-            val min = getXMin()
-
-            field = value.coerceIn(min, max.coerceAtLeast(min))
-        }
+    private var x: Double = 0.0
 
     override var enabled = true
+
+    override val linePaint = Paint().apply {
+        isAntiAlias = true
+        color = Color.BLACK
+    }
 
     override var dataWidth: Double? = null
 
     override var labelCount: Int = 2
 
     override var scrollEnabled: Boolean = false
+    override var zoomEnabled: Boolean = false
 
     var spacing = 16.0
 
@@ -46,6 +46,7 @@ class XAxis(
     private val rect = Rect()
 
     private var height: Float? = null
+    override var keepGlobalLimits = false
 
     override fun getHeight(): Float? {
         return height
@@ -65,22 +66,69 @@ class XAxis(
         return drawableSpace.left + drawableSpace.width() * (position - x) / getDataWidth()
     }
 
-    override fun getXMax(): Double {
-        return view.series.maxOf { serie ->
-            if (serie.entries.isEmpty()) {
-                return 0.0
-            }
-            serie.entries.maxOf { entry -> entry.x }
-        }
+    override fun getCurrentMin(): Double {
+        return this.x
     }
 
-    override fun getXMin(): Double {
-        return view.series.minOf { serie ->
-            if (serie.entries.isEmpty()) {
-                return 0.0
-            }
-            serie.entries.minOf { entry -> entry.x }
+    override fun setCurrent(min: Double?, max: Double?): Boolean {
+        val previousMin = getCurrentMin()
+        val previousMax = getCurrentMax()
+        setCurrentMin(min)
+        if (previousMin != getCurrentMin()) {
+            setCurrentMin(previousMin)
+            return false
         }
+        setCurrentMax(max)
+        if (previousMax != getCurrentMax()) {
+            setCurrentMax(previousMax)
+            setCurrentMin(previousMin)
+            return false
+        }
+        return true
+    }
+
+    override fun setCurrentMin(value: Double?) {
+        if (keepGlobalLimits) {
+            this.x = (value ?: 0.0).coerceIn(getMin(), getMax())
+            return
+        }
+        this.x = value ?: 0.0
+    }
+
+    override fun setCurrentMax(value: Double?) {
+        if (value == null) {
+            dataWidth = null
+            return
+        }
+        var real = value
+        if (keepGlobalLimits) {
+            real = value.coerceIn(getMin(), getMax())
+        }
+        dataWidth = real.coerceAtLeast(this.x + 1) - this.x
+    }
+
+    override fun getCurrentMax(): Double {
+        return this.x + getDataWidth()
+    }
+
+    override fun getMax(): Double {
+        return view.series
+            .maxOf { serie ->
+                if (serie.entries.isEmpty()) {
+                    return@maxOf 0.0
+                }
+                return@maxOf serie.entries.maxOf { entry -> entry.x }
+            }
+    }
+
+    override fun getMin(): Double {
+        return view.series
+            .minOf { serie ->
+                if (serie.entries.isEmpty()) {
+                    return@minOf 0.0
+                }
+                return@minOf serie.entries.minOf { entry -> entry.x }
+            }
     }
 
     override var onValueFormat: (value: Double) -> String = { it -> it.roundToInt().toString() }
@@ -138,7 +186,7 @@ class XAxis(
     }
 
     override fun getDataWidth(): Double {
-        // TODO: handle the auto dataWidth better (still not sure it is good enough)
-        return dataWidth ?: (getXMax() - getXMin() + 1)
+        // TODO: handle the auto dataWidth better
+        return dataWidth ?: (getMax() - getMin() + 1)
     }
 }

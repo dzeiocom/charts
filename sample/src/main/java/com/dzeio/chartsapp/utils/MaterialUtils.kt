@@ -9,7 +9,7 @@ import com.google.android.material.color.MaterialColors
 object MaterialUtils {
     fun materielTheme(chart: ChartViewInterface, view: View) {
         chart.yAxis.apply {
-            textLabel.color =
+            textPaint.color =
                 MaterialColors.getColor(view, com.google.android.material.R.attr.colorOnPrimaryContainer)
             linePaint.color =
                 MaterialColors.getColor(view, com.google.android.material.R.attr.colorOnPrimaryContainer)
@@ -17,8 +17,13 @@ object MaterialUtils {
                 MaterialColors.getColor(view, com.google.android.material.R.attr.colorError)
         }
 
-        chart.xAxis.textPaint.color =
-            MaterialColors.getColor(view, com.google.android.material.R.attr.colorOnPrimaryContainer)
+        chart.xAxis.apply {
+            textPaint.color =
+                MaterialColors.getColor(view, com.google.android.material.R.attr.colorOnPrimaryContainer)
+            linePaint.color =
+                MaterialColors.getColor(view, com.google.android.material.R.attr.colorOnPrimaryContainer)
+        }
+
         chart.annotator.apply {
             backgroundPaint.color = MaterialColors.getColor(
                 view,

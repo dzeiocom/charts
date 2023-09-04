@@ -72,6 +72,11 @@ class MainFragment : Fragment() {
             LineSerie(this).apply {
                 entries = Utils.generateRandomDataset(5)
             }
+            this.xAxis.keepGlobalLimits = true
+            this.xAxis.zoomEnabled = true
+            this.xAxis.scrollEnabled = true
+            this.yAxis.zoomEnabled = true
+            this.yAxis.scrollEnabled = true
             MaterialUtils.materielTheme(this, requireView())
         }
 

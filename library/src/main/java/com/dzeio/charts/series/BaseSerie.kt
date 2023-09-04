@@ -33,8 +33,8 @@ sealed class BaseSerie(
         }
 
     override fun getDisplayedEntries(): ArrayList<Entry> {
-        val minX = view.xAxis.x
-        val maxX = minX + view.xAxis.getDataWidth()
+        val minX = view.xAxis.getCurrentMin()
+        val maxX = view.xAxis.getCurrentMax()
 
         val result: ArrayList<Entry> = arrayListOf()
 
