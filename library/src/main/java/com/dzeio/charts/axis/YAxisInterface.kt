@@ -42,12 +42,6 @@ sealed interface YAxisInterface {
     var onValueFormat: (value: Float) -> String
 
     /**
-     * do the Zero line gets drawn?
-     */
-    @Deprecated("use the new global function", ReplaceWith("YAxisInterface.addLine"))
-    var drawZeroLine: Boolean
-
-    /**
      * run when manually refreshing the system
      *
      * this is where the pre-logic is handled to make [onDraw] quicker
@@ -91,13 +85,6 @@ sealed interface YAxisInterface {
      * @return the width of the sidebar
      */
     fun onDraw(canvas: Canvas, space: RectF): Float
-
-    /**
-     * Add a Goal line
-     *
-     */
-    @Deprecated("use the new global function", ReplaceWith("YAxisInterface.addLine"))
-    fun setGoalLine(height: Float?)
 
     /**
      * add a line on the Chart
